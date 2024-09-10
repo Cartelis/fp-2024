@@ -1,11 +1,19 @@
 # fp-2024
 
-## Setup
+Domain - car garage.
 
-### To get started, you first need to open the project using Visual Studio Code and having Docker Desktop
-1. `Ctrl + Shift + P`
-2. `Dev Containers: Open Folder in Container`
+The main entities are make, mode and engine.
 
-### To Build & Test the Project, run the following commands
-1. `stack build`
-2. `stack test`
+The operations include adding/removing a car to/from the garage and checking information about a car.
+
+### BNF
+
+```
+<car> ::= <make> <model>
+<make> ::= <manufacturer> <EOL> | <manufacturer> <make>
+<model> ::= <model-name> <body-type> <powertrain> <opt-consumption> <EOL> | <model-name> <model>
+<powertrain> ::= <engine> <drive-type> <transmission>
+<engine> ::= <displacement> <engine-layout> <power> <torque> <induction> <fuel> | <power> <torque> <fuel>
+<opt-consumption> ::= <fuel-consumption> "l/100km" | <fuel-consumption> "kWh/100km"
+```
+##### Induction - turbocharged, supercharged or naturally aspirated.
