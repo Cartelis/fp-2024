@@ -17,7 +17,8 @@ The operations include adding/removing a car to/from the garage, editing informa
 
 ```
 <CarGarage> ::= "CarGarage" <garage>
-<garage> ::= " " <garage_name> " " <car> <car> "(" <inner_garage> ") "
+<garage> ::= " garage " <garage_name> " " <car_list> "(" <inner_garage> ") "
+<car_list> ::= <car> | <car> <car_list>
 <inner_garage> ::= <garage> | <garage> <inner_garage> | " "
 <garage_name> ::= <string>
 
@@ -27,7 +28,7 @@ The operations include adding/removing a car to/from the garage, editing informa
 <car> ::= "Car " <make> " " <model>
 
 <make> ::= <manufacturer> | <manufacturer> <make>
-<manufacturer> ::= <string>
+<manufacturer> ::= <stringChar>
 
 <model> ::= <model_name> " " <color> " " <body_type> " " <powertrain> <opt_consumption> <mileage> | <model_name> " " <model>
 <model_name> ::= <string>
@@ -49,6 +50,7 @@ The operations include adding/removing a car to/from the garage, editing informa
 <fuel_consumption> ::= <digit> "." <digit> | <digit> <fuel_consumption>
 <mileage> ::= <digit> "km " | <digit> <mileage>
 
+<stringChar> ::= <letter> | <letter> <stringChar>
 <string> ::= <letter> | <letter> <string> | <digit> | <digit> <string>
 <letter> ::= "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K" | "L" | "M" | "N" | "O" | "P" | "Q" | "R" | "S" | "T" | "U" | "V" | "W" | "X" | "Y" | "Z" | "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j" | "k" | "l" | "m" | "n" | "o" | "p" | "q" | "r" | "s" | "t" | "u" | "v" | "w" | "x" | "y" | "z"
 <digit> ::= "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
