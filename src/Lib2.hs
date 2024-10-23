@@ -4,7 +4,11 @@ module Lib2
     parseQuery,
     State(..),
     emptyState,
-    stateTransition
+    stateTransition,
+    Garage(..),
+    Car(..),
+    Powertrain(..),
+    Engine(..),
     ) where
 
 
@@ -16,22 +20,41 @@ import qualified Data.List as L
 -- It should match the grammar from Laboratory work #1.
 -- Currently it has no constructors but you can introduce
 -- as many as needed.
-data Query
+data Query = CarGarage Garage
+    | AddCar Car
+    | RemoveCar Car
+    | EditCar Car Car
+    | ListCars
+    | View
 
 -- | The instances are needed basically for tests
 instance Eq Query where
-  (==) _ _= False
+    (==) (CarGarage g1) (CarGarage g2) = g1 == g2
+    (==) (AddCar c1) (AddCar c2) = c1 == c2
+    (==) (RemoveCar c1) (RemoveCar c2) = c1 == c2
+    (==) (EditCar oldCar1 newCar1) (EditCar oldCar2 newCar2) =
+        oldCar1 == oldCar2 && newCar1 == newCar2
+    (==) ListCars ListCars = True
+    (==) View View = True
+    (==) _ _= False
 
 instance Show Query where
-  show _ = ""
-
+    -- show _ = ""
+    show (CarGarage garage) =
+        "CarGarage: " ++ show garage
+    show (AddCar car) =
+        "Adding car: " ++ show car
+    show (RemoveCar car) =
+        "Removing car: " ++ show car
+    show (EditCar oldCar newCar) =
+        "Editing car from: " ++ show oldCar ++ "\nto: " ++ show newCar
+    show View =
+        "Viewing currnet sate"
+    show ListCars =
+        "A list of cars in main garage"
 
 type Parser a = String -> Either String (a, String)
 
--- >>> FuelEngine 4.4 "V8" 390 800 "Turbocharged" "Petrol"
--- FuelEngine {displacement = 4.4, engineLayout = "V8", power = 390, torque = 800, induction = "Turbocharged", fuel = "Petrol"}
--- >>> ElectricEngine 260 400
--- ElectricEngine {power = 260, torque = 400}
 data Engine
     = FuelEngine {
         displacement :: Double,
@@ -44,13 +67,14 @@ data Engine
     | ElectricEngine {
         power :: Integer,
         torque :: Integer
-    } deriving Show
+    }
+    deriving (Show, Eq)
 
 data Powertrain = Powertrain {
     engine :: Engine,
     drive_type :: String,
     transmission :: String
-} deriving Show
+} deriving (Show, Eq)
 
 data Car = Car {
     make :: String,
@@ -60,67 +84,29 @@ data Car = Car {
     powertrain :: Powertrain,
     consumption :: Double,
     mileage:: Integer
-} deriving Show
+} deriving (Show, Eq)
 
+data Garage = Garage {
+    garage_name :: String,
+    cars :: [Car],
+    inner_garage :: [Garage]
+} deriving (Show, Eq)
 
--- >>> parseChar 'a' "aaa"
--- Right ('a',"aa")
--- >>> parseChar '*' "fdf"
--- Left "* is not found in fdf"
--- >>> parseChar 'a' "asd"
--- Right ('a',"sd")
--- >>> parseChar '/' "/100km"
--- Right ('/',"100km")
-parseChar :: Char -> Parser Char
-parseChar c [] = Left ("Cannot find " ++ [c] ++ " in an empty input")
-parseChar c s@(h:t) = if c == h then Right (c, t) else Left (c : " is not found in " ++ s)
+colorList :: [String]
+colorList = ["Red", "Black", "Gray", "White", "Blue", "Silver", "Green", "Brown", "Orange", "Yellow", "Gold", "Purple"]
 
+bodyTypeList :: [String]
+bodyTypeList = ["Sedan", "Coupe", "Hatchback", "Pickup", "Off-road", "Sport", "Van", "Convertible", "Crossover", "SUV", "Wagon", "Muscle", "Compact"]
 
--- >>> parseLetter "fsdf"
--- Right ('f',"sdf")
-parseLetter :: Parser Char
-parseLetter [] = Left "Cannot find any letter in an empty input"
-parseLetter s@(h:t) = if C.isLetter h then Right (h, t) else Left (s ++ " does not start with a letter")
+driveTypeList :: [String]
+driveTypeList = ["AWD", "RWD", "FWD", "4WD"]
 
--- >>> parseWhitespace " asd"
--- Right (' ',"asd")
--- >>> parseWhitespace "kda"
--- Left "kda does not start with a whitespace"
-parseWhitespace :: Parser Char
-parseWhitespace [] = Left "Cannot find any whitespace in an empty input"
-parseWhitespace s@(h:t) = if ' ' == h then Right (' ', t) else Left (s ++ " does not start with a whitespace")
+gearboxList :: [String]
+gearboxList = ["Manual", "Automatic"]
 
--- >>> parseNumber "65723d"
--- Right (65723,"d")
--- >>> parseNumber "65723 d "
--- Right (65723," d ")
-parseNumber :: Parser Integer
-parseNumber [] = Left "Cannot parse a number in an empty input"
-parseNumber str =
-    let
-        digits = L.takeWhile C.isDigit str
-        rest = drop (length digits) str
-    in
-        case digits of
-            [] -> Left "Not a number"
-            _ -> Right (read digits, rest)
+fuelList :: [String]
+fuelList = ["Diesel", "Petrol", "Hydrogen"]
 
--- >>> parseText ""
--- Left "Cannot find any text made out of letters in an empty input"
--- >>> parseText "1automotive142"
--- Left "Not a letter"
--- >>> parseText "Automotive 142"
--- Right ("Automotive"," 142")
-parseText :: Parser String
-parseText [] = Left "Cannot find any text made out of letters in an empty input"
-parseText str =
-    let
-        letters = L.takeWhile C.isLetter str
-        rest = drop (length letters) str
-    in
-        case letters of
-            [] -> Left "Not a letter"
-            _ -> Right (letters, rest)
 
 
 or2 :: Parser a -> Parser a -> Parser a
@@ -130,76 +116,20 @@ or2 a b = \input ->
         Left e1 ->
             case b input of
                 Right r2 -> Right r2
-                Left e2 -> Left (e1 ++ ", " ++ e2)
+                -- Left e2 -> Left (e1 ++ ", " ++ e2)
+                Left _ -> Left e1
 
--- >>> parseTextNum "12345abcd"
--- Right (Right 12345,"abcd")
--- >>> parseTextNum "abcDEF56789"
--- Right (Left "abcDEF","56789")
--- >>> parseTextNum "M850i"
--- Right (Left "M","850i")
--- >>> parseTextNum "190kW"
--- Right (Right 190,"kW")
-parseTextNum :: Parser (Either String Integer)
-parseTextNum input =
-    case parseText input of
-        Right (txt, rest) -> Right (Left txt, rest) -- Text parsing succeeded
+or3 :: Parser a -> Parser a -> Parser a -> Parser a
+or3 a b c = \input ->
+    case a input of
+        Right r1 -> Right r1
         Left e1 ->
-            case parseNumber input of
-                Right (num, rest) -> Right (Right num, rest) -- Number parsing succeeded
-                Left e2 -> Left (e1 ++ "; " ++ e2) -- Both parsers failed
-
--- >>> parseTextNumWhitespace " 234"
--- Right (Left " ","234")
--- >>> parseTextNumWhitespace "abcd "
--- Right (Left "abcd"," ")
--- >>> parseTextNumWhitespace "avcd 234"
--- Right (Left "avcd"," 234")
--- >>> parseTextNumWhitespace "-"
--- Left "Not a letter; Not a number; - does not start with a whitespace"
--- >>> parseTextNumWhitespace "390kW "
--- Right (Right 390,"kW ")
--- >>> parseTextNumWhitespace "kW "
--- Right (Left "kW"," ")
-parseTextNumWhitespace :: Parser (Either String Integer)
-parseTextNumWhitespace input =
-    case parseTextNum input of
-        Right (Left txt, rest) -> Right (Left txt, rest)
-        Right (Right num, rest) -> Right (Right num, rest)
-        Left e1 ->
-            case parseWhitespace input of
-                Right (whitespace, rest) -> Right(Left [whitespace], rest)
-                Left e2 -> Left (e1 ++ "; " ++ e2)
-
-
-
--- >>> parseAlphaNum "ju25ss"
--- Right ("ju25ss","")
--- >>> parseAlphaNum " hus2"
--- Left "Not a letter or a digit"
--- >>> parseAlphaNum "ju25s do"
--- Right ("ju25s"," do")
--- >>> parseAlphaNum "8V"
--- Right ("8V","")
--- >>> parseAlphaNum "W12"
--- Right ("W12","")
-parseAlphaNum :: Parser String
-parseAlphaNum [] = Left "Cannot find any text made out of letters or digits in an empty input"
-parseAlphaNum str =
-    let
-        lettersDigits = L.takeWhile (\c -> C.isLetter c || C.isDigit c) str
-        rest = drop (length lettersDigits) str
-    in
-        case lettersDigits of
-            [] -> Left "Not a letter or a digit"
-            _ -> Right (lettersDigits, rest)
-
--- >>> isDot ''
--- Parser error on `''`
--- Character literals may not be empty
-isDot :: Char -> Bool
-isDot c = c == '.'
-
+            case b input of
+                Right r2 -> Right r2
+                Left e2 ->
+                    case c input of
+                        Right r3 -> Right r3
+                        Left e3 -> Left (e1 ++ ", " ++ e2 ++ ", " ++ e3)
 
 many :: Parser a -> Parser [a]
 many p = many' p []
@@ -233,16 +163,60 @@ and3 d a b c = \input ->
         Left e1 -> Left e1
 
 
--- >>> parseDouble "4.23"
--- Right (4.23,"")
--- >>> parseDouble "0.69"
--- Right (0.69,"")
--- >>> parseDouble "a.23"
--- Left "Not a digit or dot"
--- >>> parseDouble ""
--- Left "Cannot parse a double number in an empty input"
--- >>> parseDouble ".528"
--- Prelude.read: no parse
+parseChar :: Char -> Parser Char
+parseChar c [] = Left ("Cannot find " ++ [c] ++ " in an empty input")
+parseChar c s@(h:t) = if c == h then Right (c, t) else Left (c : " is not found in " ++ s)
+
+
+parseWhitespace :: Parser Char
+parseWhitespace [] = Left "Cannot find any whitespace in an empty input"
+parseWhitespace s@(h:t) = if ' ' == h then Right (' ', t) else Left (s ++ " does not start with a whitespace")
+
+
+-- <digit> ::= "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
+parseNumber :: Parser Integer
+parseNumber [] = Left "Cannot parse a number in an empty input"
+parseNumber str =
+    let
+        digits = L.takeWhile C.isDigit str
+        rest = drop (length digits) str
+    in
+        case digits of
+            [] -> Left "Not a number"
+            _ -> Right (read digits, rest)
+
+
+-- <letter> ::= "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K" | "L" | "M" | "N" | "O" | "P" | "Q" | "R" | "S" | "T" | "U" | "V" | "W" | "X" | "Y" | "Z" | "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j" | "k" | "l" | "m" | "n" | "o" | "p" | "q" | "r" | "s" | "t" | "u" | "v" | "w" | "x" | "y" | "z"
+parseText :: Parser String
+parseText [] = Left "Cannot find any text made out of letters in an empty input"
+parseText str =
+    let
+        letters = L.takeWhile C.isLetter str
+        rest = drop (length letters) str
+    in
+        case letters of
+            [] -> Left "Not a letter"
+            _ -> Right (letters, rest)
+
+
+-- <string> ::= <letter> | <letter> <string> | <digit> | <digit> <string>
+parseAlphaNum :: Parser String
+parseAlphaNum [] = Left "Cannot find any text made out of letters or digits in an empty input"
+parseAlphaNum str =
+    let
+        lettersDigits = L.takeWhile (\c -> C.isLetter c || C.isDigit c) str
+        rest = drop (length lettersDigits) str
+    in
+        case lettersDigits of
+            [] -> Left "Not a letter or a digit"
+            _ -> Right (lettersDigits, rest)
+
+
+isDot :: Char -> Bool
+isDot c = c == '.'
+
+
+-- <fuel_consumption> ::= <digit> "." <digit> | <digit> <fuel_consumption>
 parseDouble :: Parser Double
 parseDouble [] = Left "Cannot parse a double number in an empty input"
 parseDouble str =
@@ -252,182 +226,490 @@ parseDouble str =
     in
         case doubleNum of
             [] -> Left "Not a digit or dot"
-            _ -> Right(read doubleNum, rest)
+            _ -> Right (read doubleNum, rest)
 
 
--- >>> parseTextWhitespaceOrdered "BMW M850i "
--- Right ("BMW","M850i ")
--- >>> parseTextWhitespaceOrdered "Black Coupe "
--- Right ("Black","Coupe ")
--- >>> parseTextWhitespaceOrdered "85 Coupe "
--- Right ("85","Coupe ")
--- >>> parseTextWhitespaceOrdered "Car BMW"
--- Right ("Car","BMW")
--- >>> parseTextWhitespaceOrdered "M850i Car"
--- Right ("M850i","Car")
+-- <engine_layout> ::= <string>
+-- <garage_name> ::= <string>
 parseAlphaNumWhitespaceOrdered :: Parser String
 parseAlphaNumWhitespaceOrdered = and2' (\a _ -> a) parseAlphaNum parseWhitespace
 
 
--- >>> parseDisplacement "4.4 L V8 "
--- Right (4.4,"V8 ")
--- >>> parseDisplacement "8.9 L V12 500kW"
--- Right (8.9,"V12 500kW")
--- >>> parseDisplacement "a.4 L V8 "
--- Left "Not a digit or dot"
--- >>> parseDisplacement ""
--- Left "Cannot parse a double number in an empty input"
+-- <displacement> ::= <digit> "." <digit> " L" | <digit> <displacement>
 parseDisplacement :: Parser Double
 parseDisplacement = and2' (\a _ -> a) parseDouble (and3 (\_ b _ -> b) parseWhitespace (parseChar 'L') parseWhitespace)
 
--- >>> parseFuelMeasurement "l/100km "
--- Right ("l/100km"," ")
-parseFuelMeasurement :: Parser String
-parseFuelMeasurement [] = Left "Empty fuel measurement input"
-parseFuelMeasurement input =
-    let
-        fuelMeasurement = L.takeWhile (\c -> C.isLetter c || C.isDigit c || c == '/') input
-        rest = drop (length fuelMeasurement) input
-    in
-        case fuelMeasurement of
-            [] -> Left "Not a letter, a digit or /"
-            _ -> Right (fuelMeasurement, rest)
 
-
--- >>> parseFuelConsumption "71.2kWh/100km "
--- Right (71.2,"")
--- >>> parseFuelConsumption "71.2kWh\100km "
--- Right (0.0,"71.2kWhdkm ")
--- >>> parseFuelConsumption "12.7l/100km 125km "
--- Right (12.7,"125km ")
--- >>> parseFuelConsumption "125km "
--- Right (0.0,"125km ")
--- >>> parseFuelConsumption "256.6kWh/100km 2km "
--- Right (256.6,"2km ")
+-- <opt_consumption> ::= " " <fuel_consumption> "l/100km " | " " <fuel_consumption> "kWh/100km " | " "
 parseFuelConsumption :: Parser Double
 parseFuelConsumption input = case parseFuelConsumptionInner input of
-                                Right (v, r) -> Right (v, r)
+                                Right ((v, measurement), r) ->
+                                    if measurement == "l/100km" || measurement == "kWh/100km"
+                                        then Right (v, r)
+                                        else Left ("Not supported fuel measurement: " ++ measurement)
                                 Left e1 ->
-                                    if e1 == "/ is not found in  "
+                                    if e1 == "Cannot find forward slash"
                                         then Right (0, input)
                                         else Left e1
--- >>> parseFuelConsumptionInner "1km "
--- Left "/ is not found in  "
-parseFuelConsumptionInner :: Parser Double
-parseFuelConsumptionInner = and3 (\a _ _ -> a) parseDouble 
-                        (and3 (\_ _ _ -> ()) parseAlphaNum (parseChar '/') parseAlphaNum)
+
+
+parseFuelConsumptionInner :: Parser (Double, String)
+parseFuelConsumptionInner = and3 (\a b _ -> (a, b)) parseDouble
+                        (and3 (\a b c -> a ++ [b] ++ c) parseAlphaNum parseForwardSlash parseAlphaNum)
                         parseWhitespace
 
--- >>> parseNumberTextWhitespace "390kW 780Nm"
--- Right (390,"780Nm")
--- >>> parseNumberTextWhitespace "2km "
--- Right (2,"")
+
+parseForwardSlash :: Parser Char
+parseForwardSlash [] = Left "Cannot find forward slash in an empty input"
+parseForwardSlash (h : t)
+  | h == '/' = Right (h, t)
+  | h == '\\' = Left "Wrong fuel consumption format"
+  | otherwise = Left "Cannot find forward slash"
+
+
+-- <power> ::= <digit> "kW" | <digit> <power>
+-- <torque> ::= <digit> "Nm" | <digit> <torque>
+-- <mileage> ::= <digit> "km " | <digit> <mileage>
 parseNumberTextWhitespace :: Parser Integer
 parseNumberTextWhitespace = and3 (\a _ _ -> a) parseNumber parseText parseWhitespace
 
 
--- and6 :: (a -> b -> c -> d -> e -> f -> g) -> Parser a -> Parser b -> Parser c -> Parser d -> Parser e -> Parser f -> Parser g 
--- and6 g a b c d e f = \input ->
---     case a input of
---         Right (v1, r1) ->
---             case b r1 of
---                 Right (v2, r2) ->
---                     case c r2 of
---                         Right (v3, r3) ->
---                             case d r3 of
---                                 Right (v4, r4) ->
---                                     case e r4 of
---                                         Right (v5, r5) ->
---                                             case f r5 of
---                                                 Right (v6, r6) -> Right (g v1 v2 v3 v4 v5 v6, r6)
---                                                 Left e6 -> Left e6
---                                         Left e5 -> Left e5
---                                 Left e4 -> Left e4   
---                         Left e3 -> Left e3
---                 Left e2 -> Left e2
---         Left e1 -> Left e1
+-- <induction> ::= "Turbocharged" | "Supercharged" | "Naturally aspirated"
+parseInduction :: Parser String
+parseInduction input =
+    case parseAlphaNumWhitespaceOrdered input of
+        Right (v1, r1) ->
+            if v1 == "Naturally"
+                then
+                    case parseAlphaNumWhitespaceOrdered r1 of
+                        Right (v2, r2) ->
+                            if v2 == "aspirated"
+                                then Right (v1 ++ " " ++ v2, r2)
+                                else Left ("Not supported induction type: " ++ v1 ++ " " ++ v2)
+                        Left e2 -> Left e2
+                else if v1 == "Turbocharged" || v1 == "Supercharged"
+                    then Right (v1, r1)
+                    else Left ("Not supported induction type: " ++ v1)
+        Left e1 -> Left e1
 
 
+-- <fuel> ::= "Diesel" | "Petrol" | "Hydrogen"
+parseFuel :: Parser String
+parseFuel input =
+    case parseAlphaNumWhitespaceOrdered input of
+        Right (v, r) ->
+            if elem v fuelList
+                then Right (v, r)
+                else Left ("Not supported fuel: " ++ v)
+        Left e1 -> Left e1
 
--- >>> parseFuelEngine "4.4 L V8 390kW 800Nm Turbocharged Petrol "
--- Right (FuelEngine {displacement = 4.4, engineLayout = "V8", power = 390, torque = 800, induction = "Turbocharged", fuel = "Petrol"},"")
+
 parseFuelEngine :: Parser Engine
 parseFuelEngine input = case parseFuelEngineInfo input of
                     Right (((disp, layout, pow), (torq, ind, fuelType)), r) ->
                         Right (FuelEngine disp layout pow torq ind fuelType, r)
                     Left e1 -> Left e1
 
--- >>> parseFuelEngineInfo "4.4 L V8 390kW 800Nm Turbocharged Petrol "
--- Right (((4.4,"V8",390),(800,"Turbocharged","Petrol")),"")
+
 parseFuelEngineInfo :: Parser ((Double, String, Integer), (Integer, String, String))
 parseFuelEngineInfo = and2' (,)
                     (and3 (,,) parseDisplacement parseAlphaNumWhitespaceOrdered parseNumberTextWhitespace)
-                    (and3 (,,) parseNumberTextWhitespace parseAlphaNumWhitespaceOrdered parseAlphaNumWhitespaceOrdered)
--- parseFuelEngineInfo = and6 (\a b c d e f -> (a, b, c, d, e, f)) 
-                    -- parseDisplacement parseAlphaNumWhitespaceOrdered parseNumberTextWhitespace
-                    -- parseNumberTextWhitespace parseAlphaNumWhitespaceOrdered parseAlphaNumWhitespaceOrdered
+                    (and3 (,,) parseNumberTextWhitespace parseInduction parseFuel)
 
--- >>> parseElectricEngine "202kW 25Nm Electric 4WD"
--- Right (ElectricEngine {power = 202, torque = 25},"4WD")
+
 parseElectricEngine :: Parser Engine
 parseElectricEngine input = case (and3 (\a b _ -> (a, b))
-                                    parseNumberTextWhitespace parseNumberTextWhitespace parseAlphaNumWhitespaceOrdered) input of 
-                                Right ((pow, torq), r) -> Right(ElectricEngine pow torq, r)
+                                    parseNumberTextWhitespace parseNumberTextWhitespace parseAlphaNumWhitespaceOrdered) input of
+                                Right ((pow, torq), r) -> Right (ElectricEngine pow torq, r)
                                 Left e1 -> Left e1
 
+
+-- <engine> ::= <displacement> " " <engine_layout> " " <power> " " <torque> " " <induction> " " <fuel> | <power> " " <torque> " Electric"
 parseEngine :: Parser Engine
 parseEngine = or2 parseFuelEngine parseElectricEngine
 
--- >>> parsePowertrain "202kW 25Nm Electric 4WD Automatic 2km "
--- Right (Powertrain {engine = ElectricEngine {power = 202, torque = 25}, drive_type = "4WD", transmission = "Automatic"},"2km ")
--- >>> parsePowertrain "0.7 L D 8kW 5Nm Supercharged Turbocharged Petrol FWD Manual "
--- Right (Powertrain {engine = FuelEngine {displacement = 0.7, engineLayout = "D", power = 8, torque = 5, induction = "Supercharged", fuel = "Turbocharged"}, drive_type = "Petrol", transmission = "FWD"},"Manual ")
+
+-- <drive_type> ::= "AWD" | "RWD" | "FWD" | "4WD"
+parseDriveType :: Parser String
+parseDriveType input =
+    case parseAlphaNumWhitespaceOrdered input of
+        Right (v, r) ->
+            if elem v driveTypeList
+                then Right (v, r)
+                else Left ("Not supported drive type: " ++ v)
+        Left e1 -> Left e1
+
+
+-- <transmission> ::= "Manual" | "Automatic"
+parseGearbox :: Parser String
+parseGearbox input =
+    case parseAlphaNumWhitespaceOrdered input of
+        Right (v, r) ->
+            if elem v gearboxList
+                then Right (v, r)
+                else Left ("Not supported gearbox: " ++ v)
+        Left e1 -> Left e1
+
+
+-- <powertrain> ::= <engine> " " <drive_type> " " <transmission>
 parsePowertrain :: Parser Powertrain
 parsePowertrain input = case parsePowertrainInfo input of
                             Right((engine1, drive_type1, trans), r) ->
                                 Right (Powertrain engine1 drive_type1 trans, r)
                             Left e1 -> Left e1
 
--- >>> parsePowertrainInfo "202kW 25Nm Electric 4WD Automatic 2km "
--- Right ((ElectricEngine {power = 202, torque = 25},"4WD","Automatic"),"2km ")
-parsePowertrainInfo :: Parser (Engine, String, String)
-parsePowertrainInfo = and3 (,,) parseEngine parseAlphaNumWhitespaceOrdered parseAlphaNumWhitespaceOrdered
 
--- >>> parseCar "sKXg E Red Wagon 06kW 8475Nm Electric RWD Automatic 924.1kWh/100km 07km "
--- Right (Car {make = "sKXg", model = "E", color = "Red", body_type = "Wagon", powertrain = Powertrain {engine = ElectricEngine {power = 6, torque = 8475}, drive_type = "RWD", transmission = "Automatic"}, consumption = 924.1, mileage = 7},"")
+parsePowertrainInfo :: Parser (Engine, String, String)
+parsePowertrainInfo = and3 (,,) parseEngine parseDriveType parseGearbox
+
+
+parseModelNameOne :: Parser String
+parseModelNameOne [] = Left "Cannot find any model name made out od letters or digits in an empty input"
+parseModelNameOne input =
+        case parseAlphaNumWhitespaceOrdered input of
+            Right (v, r) ->
+                if elem v colorList
+                    -- then Right ("", v ++ " " ++ r)
+                    then Left "Color read"
+                    else Right (v, r)
+            Left e1 -> Left e1
+
+
+trimTrailing :: String -> String
+trimTrailing = reverse . dropWhile C.isSpace . reverse
+
+
+-- <model_name> ::= <string> " " | <string> " " <model_name>
+parseModelName :: Parser String
+parseModelName input = 
+    case parseModelName' input of
+        Right (stringList, r) -> Right (trimTrailing (concatStringListToString stringList), r)
+        Left e -> Left e
+
+
+parseModelName' :: Parser [String]
+parseModelName' = and2' (:) parseModelNameOne (many parseModelNameOne)
+
+
+concatStringListToString :: [String] -> String
+concatStringListToString [] = ""
+concatStringListToString (h:t) = h ++ " " ++ concatStringListToString t
+
+
+-- <color> ::= "Red" | "Black" | "Gray" | "White" | "Blue" | "Silver" | "Green" | "Brown" | "Orange" | "Yellow" | "Gold" | "Purple"
+parseColor :: Parser String
+parseColor input =
+    case parseAlphaNumWhitespaceOrdered input of
+        Right (v, r) ->
+            if elem v colorList
+                then Right (v, r)
+                else Left ("Not supported color: " ++ v)
+        Left e1 -> Left e1
+
+
+-- <make> ::= <stringMake>
+parseMake :: Parser String
+parseMake = and2' (\a _ -> a) parseAlphaWithMinus parseWhitespace
+
+
+-- <stringMake> ::= <letterOrMinus> | <letterOrMinus> <stringMake>
+-- <letterOrMinus> ::= <letter> | "-"
+parseAlphaWithMinus :: Parser String
+parseAlphaWithMinus [] = Left "Cannot find any text made out of letters or - in an empty input"
+parseAlphaWithMinus str =
+    let
+        lettersMinus = L.takeWhile (\c -> C.isLetter c || c == '-') str
+        rest = drop (length lettersMinus) str
+    in
+        case lettersMinus of
+            [] -> Left "Not a letter or -"
+            _ -> Right (lettersMinus, rest)
+
+
+parseAlphaNumWithMinus :: Parser String
+parseAlphaNumWithMinus [] = Left "Cannot find any text made out of letters or digits in an empty input"
+parseAlphaNumWithMinus str =
+    let
+        lettersDigits = L.takeWhile (\c -> C.isLetter c || C.isDigit c || c == '-') str
+        rest = drop (length lettersDigits) str
+    in
+        case lettersDigits of
+            [] -> Left "Not a letter, a digit or -"
+            _ -> Right (lettersDigits, rest)
+
+
+parseAlphaNumWithMinusWhitespace :: Parser String
+parseAlphaNumWithMinusWhitespace = and2' (\a _ -> a) parseAlphaNumWithMinus parseWhitespace
+
+
+-- <body_type> ::= "Sedan" | "Coupe" | "Hatchback" | "Pickup" | "Off-road" | "Sport" | "Van" | "Convertible" | "Crossover" | "SUV" | "Wagon" | "Muscle" | "Compact"
+parseBodyType :: Parser String
+parseBodyType input =
+    case parseAlphaNumWithMinusWhitespace input of
+        Right (v, r) ->
+            if elem v bodyTypeList
+                then Right (v, r)
+                else Left ("Not supported body type: " ++ v)
+        Left e1 -> Left e1
+
+
+-- <model> ::= <model_name> <color> " " <body_type> " " <powertrain> <opt_consumption> <mileage>
+parseModel :: Parser ((String, String, String), (Powertrain, Double, Integer))
+parseModel = and2' (,) (and3 (,,) parseModelName parseColor parseBodyType)
+                        (and3 (,,) parsePowertrain parseFuelConsumption parseNumberTextWhitespace)
+
+
 parseCar :: Parser Car
 parseCar input = case parseCarInfo input of
-                    Right (((make1, model1, color1), (body_type1, powertrain1, consumption1), miles), r) ->
-                        Right (Car make1 model1 color1 body_type1 powertrain1 consumption1 miles, r)
-                    Left e1 -> Left e1
-
--- >>> parseCarInfo "BMW M850i Black Coupe 4.4 L V8 390kW 750Nm Turbocharged Petrol AWD Automatic 18153km "
--- Right ((("BMW","M850i","Black"),("Coupe",Powertrain {engine = FuelEngine {displacement = 4.4, engineLayout = "V8", power = 390, torque = 750, induction = "Turbocharged", fuel = "Petrol"}, drive_type = "AWD", transmission = "Automatic"},0.0),18153),"")
--- >>> parseCarInfo "Z q Red1 Compact 0.7 L D 8kW 5Nm Supercharged Petrol FWD Manual 256.6kWh/100km 2km "
--- Right ((("Z","q","Red1"),("Compact",Powertrain {engine = FuelEngine {displacement = 0.7, engineLayout = "D", power = 8, torque = 5, induction = "Supercharged", fuel = "Petrol"}, drive_type = "FWD", transmission = "Manual"},256.6),2),"")
--- >>> parseCarInfo "bhb I Gray Muscle 0kW 673Nm Electric FWD Automatic 2.9l/100km 2km "
--- Right ((("bhb","I","Gray"),("Muscle",Powertrain {engine = ElectricEngine {power = 0, torque = 673}, drive_type = "FWD", transmission = "Automatic"},2.9),2),"")
-parseCarInfo :: Parser ((String, String, String), (String, Powertrain, Double), Integer)
-parseCarInfo = and3 (,,) (and3 (,,) parseAlphaNumWhitespaceOrdered parseAlphaNumWhitespaceOrdered parseAlphaNumWhitespaceOrdered)
-                        (and3 (,,) parseAlphaNumWhitespaceOrdered parsePowertrain parseFuelConsumption) parseNumberTextWhitespace
+    Right ((make', ((model', color', body_type'), (powertrain', consumption', mileage'))), r) ->
+        Right (Car make' model' color' body_type' powertrain' consumption' mileage', r)
+    Left e -> Left e
 
 
+parseCarInfo :: Parser (String, ((String, String, String), (Powertrain, Double, Integer)))
+parseCarInfo = and2' (,) parseMake parseModel
+
+
+parseCarPrefix :: Parser Bool
+parseCarPrefix input = case parseAlphaNumWhitespaceOrdered input of
+                            Right (v, r) -> Right (v == "Car", r)
+                            Left err -> Left err
+
+
+-- <car> ::= "Car " <make> " " <model>
+parseCarWithPrefix :: Parser Car
+parseCarWithPrefix input = case parseCarPrefix input of
+                            Right (carPrefixFound, r) ->
+                                if carPrefixFound then parseCar r else Left "Prefix 'Car' not found"
+                            Left e1 -> Left e1
+
+
+-- <car_list> ::= <car> | <car> <car_list>
+parseListOfCars :: Parser [Car]
+parseListOfCars = and2' (:) parseCarWithPrefix
+                        (many parseCarWithPrefix)
+
+
+-- <CarGarage> ::= "CarGarage" <garage>
+parseCarGarage :: Parser Query
+parseCarGarage input =
+    case parseAlphaNumWhitespaceOrdered input of
+        Right (prefix, r1) ->
+            if prefix == "CarGarage"
+                then
+                    case parseGarage r1 of
+                        Right (garage, r2) -> Right (CarGarage garage, r2)
+                        Left e2 -> Left e2
+                else Left "Not supported prefix/command"
+        Left e1 -> Left e1
+
+
+-- <garage> ::= " Garage " <garage_name> " " <car_list> "(" <inner_garage> ") "
+parseGarage :: Parser Garage
+parseGarage input =
+    case parseGarageInfo input of
+        Right ((name, carList), r1) ->
+            case parseGarage' r1 of
+                Right (garages, r2) -> Right (Garage name carList garages, r2)
+                Left _ -> Right (Garage name carList [], r1)
+        Left e1 -> Left e1
+
+
+parseGarageInfo :: Parser (String, [Car])
+parseGarageInfo input =
+    case parseAlphaNumWhitespaceOrdered input of
+        Right (w, r) ->
+            if w == "Garage"
+                then and2' (,) parseAlphaNumWhitespaceOrdered parseListOfCars r
+                else Left ("Prefix Garage not found: " ++ w)
+        Left e -> Left e
+
+
+-- <inner_garage> ::= <garage> | <garage> <inner_garage> | " "
+parseGarage' :: Parser [Garage]
+parseGarage' [] = Left ""
+parseGarage' input =
+    case parseParenthesesStartWhitespace input of
+        Right (_, r1) ->
+            case parseGarage r1 of
+                Right (garage, r2) ->
+                    case parseGarage' r2 of
+                        Right (garages, r3) ->
+                            Right (garage : garages, r3)
+                        Left _ ->
+                            case parseParenthesesEndWhitespace r2 of
+                                Right (_, r3) -> Right ([garage], r3)
+                                Left e3 -> Left e3
+                Left _ ->
+                    case parseParenthesesEndWhitespace r1 of
+                        Right (_, r2) -> Right ([], r2)
+                        Left e2 -> Left e2
+        Left _ ->
+            case parseWhitespace input of
+                Right (_, r1) ->
+                    case parseGarage r1 of
+                        Right (garage, r2) ->
+                            case parseGarage' r2 of
+                                Right (garages, r3) ->
+                                    Right (garage : garages, r3)
+                                Left _ ->
+                                    case parseParenthesesEndWhitespace r2 of
+                                        Right (_, r3) -> Right ([garage], r3)
+                                        Left e3 -> Left e3
+                        Left _ ->
+                            case parseParenthesesEndWhitespace r1 of
+                                Right (_, r2) -> Right ([], r2)
+                                Left e2 -> Left e2
+                Left e1 -> Left e1
+
+
+parseParenthesesStartWhitespace :: Parser Bool
+parseParenthesesStartWhitespace [] = Left "Parentheses start and whitespace not found"
+parseParenthesesStartWhitespace input =
+    case parseChar '(' input of
+        Right (_, r1) ->
+            case parseWhitespace r1 of
+                Right (_, r2) -> Right (True, r2)
+                Left e2 -> Left e2
+        Left e1 -> Left e1
+
+
+parseParenthesesEndWhitespace :: Parser Bool
+parseParenthesesEndWhitespace [] = Left "Parentheses end and whitespace not found"
+parseParenthesesEndWhitespace input =
+    case parseChar ')' input of
+        Right (_, r1) ->
+            case parseWhitespace r1 of
+                Right (_, r2) -> Right (True, r2)
+                Left e2 -> Left e2
+        Left e1 -> Left e1
+
+
+-- <command> ::= <command_type> " " <car> | "EditCar " <car> "to " <car> | "ListCars" | "View"
+parseCommand :: Parser Query
+parseCommand = parseAddOrRemoveCar `or2` parseEditCar `or2` parseListCars `or2` parseView
+
+
+-- <command_type> ::= "AddCar" | "RemoveCar"
+parseAddOrRemoveCar :: Parser Query
+parseAddOrRemoveCar [] = Left "Cannot parse empty input"
+parseAddOrRemoveCar input =
+    case parseAlphaNumWhitespaceOrdered input of
+        Right (word, r1) ->
+            if word == "AddCar"
+                then case parseCarWithPrefix r1 of
+                    Right (car, r2) -> Right (AddCar car, r2)
+                    Left e2 -> Left e2
+                else if word == "RemoveCar"
+                    then case parseCarWithPrefix r1 of
+                        Right (car, r2) -> Right (RemoveCar car, r2)
+                        Left e2 -> Left e2
+                else Left "Given command not found"
+        Left e1 -> Left e1
+
+
+parseEditCar :: Parser Query
+parseEditCar [] = Left "Cannot parse empty input"
+parseEditCar input =
+    case parseAlphaNumWhitespaceOrdered input of
+        Right (word1, r1) ->
+            if word1 == "EditCar"
+                then case parseCarWithPrefix r1 of
+                    Right (oldCar, r2) -> 
+                        case parseAlphaNumWhitespaceOrdered r2 of
+                            Right (word2, r3) ->
+                                if word2 == "to"
+                                    then case parseCarWithPrefix r3 of
+                                        Right (newCar, r4) -> Right (EditCar oldCar newCar, r4)
+                                        Left e4 -> Left e4
+                                    else Left "Given command not found"
+                            Left e3 -> Left e3
+                    Left e2 -> Left e2
+                else Left "Given command not found"
+        Left e1 -> Left e1
+
+
+parseView :: Parser Query
+parseView [] = Left "Cannot parse empty input"
+parseView input =
+    case parseText input of
+        Right (word, r1) ->
+            if word == "View"
+                then Right (View, r1)
+                else Left "Given command not found"
+        Left e1 -> Left e1
+
+
+parseListCars :: Parser Query
+parseListCars [] = Left "Cannot parse empty input"
+parseListCars input =
+    case parseText input of
+        Right (word, r1) ->
+            if word == "ListCars"
+                then Right(ListCars, r1)
+                else Left "Given command not found"
+        Left e1 -> Left e1
 
 
 -- | Parses user's input.
 -- The function must have tests.
 parseQuery :: String -> Either String Query
-parseQuery _ = Left "Not implemented 2"
+parseQuery [] = Left "Cannot parse empty input"
+parseQuery input =
+    case or2 parseCarGarage parseCommand input of
+        Right (query, _) -> Right query
+        -- _ -> Left "Failed to parse query: Unknown command"
+        Left e -> Left ("Failed to parse query: " ++ e)
+
 
 -- | An entity which represents your program's state.
 -- Currently it has no constructors but you can introduce
 -- as many as needed.
-data State
+data State = State {
+    stateGarage :: Garage
+} deriving (Show, Eq)
+
 
 -- | Creates an initial program's state.
 -- It is called once when the program starts.
 emptyState :: State
-emptyState = error "Not implemented 1"
+emptyState = State {
+    stateGarage = Garage {
+        garage_name = "",
+        cars = [],
+        inner_garage = []
+    }
+}
+
+
+removeFirstCarOccurence :: Car -> [Car] -> [Car]
+removeFirstCarOccurence _ [] = []
+removeFirstCarOccurence carToRemove (h:t)
+    | carToRemove == h
+        = t
+    | otherwise
+        = h : removeFirstCarOccurence carToRemove t
+
+
+editCarInList :: Car -> Car -> [Car] -> [Car]
+editCarInList _ _ [] = []
+editCarInList oldCar newCar (h:t)
+    | oldCar == h
+        = newCar : t
+    | otherwise
+        = h : editCarInList oldCar newCar t
+
+
+-- Function to get all cars from a garage and its inner garages
+getAllCars :: Garage -> [Car]
+getAllCars garage = cars garage ++ innerCars (inner_garage garage)
+
+
+-- Helper function to gather cars from inner garages
+innerCars :: [Garage] -> [Car]
+innerCars [] = []
+innerCars (g:gs) = getAllCars g ++ innerCars gs
+
 
 -- | Updates a state according to a query.
 -- This allows your program to share the state
@@ -435,4 +717,47 @@ emptyState = error "Not implemented 1"
 -- Right contains an optional message to print and
 -- an updated program's state.
 stateTransition :: State -> Query -> Either String (Maybe String, State)
-stateTransition _ _ = Left "Not implemented 3"
+-- stateTransition _ _ = Left "Not implemented 3"
+stateTransition state (CarGarage garage) = 
+    let
+        newState = state { stateGarage = garage }
+    in
+        Right (Just "CarGarage state updated!", newState)
+
+stateTransition state (AddCar car) =
+    let
+        currentGarage = stateGarage state
+        updatedCarList = car : cars currentGarage
+        updatedGarage = currentGarage { cars = updatedCarList }
+        newState = state { stateGarage = updatedGarage }
+    in
+        Right (Just "Car added!", newState)
+
+stateTransition state (RemoveCar car) =
+    let
+        currentGarage = stateGarage state
+        currentCarList = cars currentGarage
+        updatedCarList = removeFirstCarOccurence car currentCarList
+        updatedGarage = currentGarage { cars = updatedCarList }
+        newState = state { stateGarage = updatedGarage }
+    in
+        Right (Just "Car removed!", newState)
+
+stateTransition state (EditCar oldCar newCar) =
+    let
+        currentGarage = stateGarage state
+        currentCarList = cars currentGarage
+        updatedCarList = editCarInList oldCar newCar currentCarList
+        updatedGarage = currentGarage { cars = updatedCarList }
+        newState = state { stateGarage = updatedGarage }
+    in
+        Right (Just "Car edited!", newState)
+
+stateTransition state ListCars =
+    let
+        allCarList = getAllCars (stateGarage state)
+    in
+        Right (Just ("Listing cars: " ++ show allCarList), state)
+
+stateTransition state View =
+    Right (Just ("Current state: " ++ show state), state)
