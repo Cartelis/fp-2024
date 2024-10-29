@@ -25,6 +25,7 @@ data Query = CarGarage Garage
     | RemoveCar Car
     | EditCar Car Car
     | ListCars
+    | CalculatePollutionTax Car
     | View
 
 -- | The instances are needed basically for tests
@@ -35,6 +36,7 @@ instance Eq Query where
     (==) (EditCar oldCar1 newCar1) (EditCar oldCar2 newCar2) =
         oldCar1 == oldCar2 && newCar1 == newCar2
     (==) ListCars ListCars = True
+    (==) (CalculatePollutionTax car1) (CalculatePollutionTax car2) = car1 == car2
     (==) View View = True
     (==) _ _= False
 
@@ -52,6 +54,7 @@ instance Show Query where
         "Viewing currnet sate"
     show ListCars =
         "A list of cars in main garage"
+    show (CalculatePollutionTax _) = ""
 
 type Parser a = String -> Either String (a, String)
 
@@ -369,7 +372,6 @@ parseModelNameOne input =
         case parseAlphaNumWhitespaceOrdered input of
             Right (v, r) ->
                 if elem v colorList
-                    -- then Right ("", v ++ " " ++ r)
                     then Left "Color read"
                     else Right (v, r)
             Left e1 -> Left e1
@@ -587,13 +589,13 @@ parseParenthesesEndWhitespace input =
 
 -- <command> ::= <command_type> " " <car> | "EditCar " <car> "to " <car> | "ListCars" | "View"
 parseCommand :: Parser Query
-parseCommand = parseAddOrRemoveCar `or2` parseEditCar `or2` parseListCars `or2` parseView
+parseCommand = parseAddOrRemoveOrCalculatePollutionCar `or2` parseEditCar `or2` parseListCars `or2` parseView
 
 
--- <command_type> ::= "AddCar" | "RemoveCar"
-parseAddOrRemoveCar :: Parser Query
-parseAddOrRemoveCar [] = Left "Cannot parse empty input"
-parseAddOrRemoveCar input =
+-- <command_type> ::= "AddCar" | "RemoveCar" | "CalculatePollutionTax"
+parseAddOrRemoveOrCalculatePollutionCar :: Parser Query
+parseAddOrRemoveOrCalculatePollutionCar [] = Left "Cannot parse empty input"
+parseAddOrRemoveOrCalculatePollutionCar input =
     case parseAlphaNumWhitespaceOrdered input of
         Right (word, r1) ->
             if word == "AddCar"
@@ -603,6 +605,10 @@ parseAddOrRemoveCar input =
                 else if word == "RemoveCar"
                     then case parseCarWithPrefix r1 of
                         Right (car, r2) -> Right (RemoveCar car, r2)
+                        Left e2 -> Left e2
+                else if word == "CalculatePollutionTax"
+                    then case parseCarWithPrefix r1 of
+                        Right (car, r2) -> Right (CalculatePollutionTax car, r2)
                         Left e2 -> Left e2
                 else Left "Given command not found"
         Left e1 -> Left e1
@@ -710,6 +716,13 @@ innerCars :: [Garage] -> [Car]
 innerCars [] = []
 innerCars (g:gs) = getAllCars g ++ innerCars gs
 
+calculatePollutionTaxOnEngine :: Engine -> Int
+calculatePollutionTaxOnEngine givenEngine
+    | power givenEngine >= 400 = 360
+    | power givenEngine >= 250 = 280
+    | power givenEngine >= 150 = 160
+    | otherwise = 0
+
 
 -- | Updates a state according to a query.
 -- This allows your program to share the state
@@ -758,6 +771,14 @@ stateTransition state ListCars =
         allCarList = getAllCars (stateGarage state)
     in
         Right (Just ("Listing cars: " ++ show allCarList), state)
+
+stateTransition state (CalculatePollutionTax givenCar) =
+    let
+        engineInCar = engine (powertrain givenCar)
+        calculatedTax = calculatePollutionTaxOnEngine engineInCar
+    in
+        Right (Just ("Pollution tax on given car: " ++ show calculatedTax ++ " Eur"), state)
+
 
 stateTransition state View =
     Right (Just ("Current state: " ++ show state), state)

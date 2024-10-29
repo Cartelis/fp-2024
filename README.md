@@ -11,7 +11,7 @@ This application is designed to manage a car garage's inventory.
 1. Make: shows which company produces(or produced) this car (e.g., Volkswagen, Audi, BMW).
 1. Model: shows exact model name (e.g., Golf, A6, M850i), provides information about the car's engine, which wheels drive the car and gearbox.
 
-The operations include adding/removing a car to/from the garage, editing information about a car, listing all cars in the garage. 
+The operations include adding/removing a car to/from the garage, editing information about a car, listing all cars in the garage, calculating pollution tax on given car. 
 
 ### BNF
 
@@ -23,7 +23,7 @@ The operations include adding/removing a car to/from the garage, editing informa
 <garage_name> ::= <string>
 
 <command> ::= <command_type> " " <car> | "EditCar " <car> "to " <car> | "ListCars" | "View"
-<command_type> ::= "AddCar" | "RemoveCar"
+<command_type> ::= "AddCar" | "RemoveCar" | "CalculatePollutionTax"
 
 <car> ::= "Car " <make> " " <model>
 
@@ -77,7 +77,7 @@ To:
 <car_list> ::= <car> | <car> <car_list>
 ```
 
-**Command**: Updated command names, added ``View`` command.
+**Command**: Updated command names, added ``View`` command. Added ``CalculatePollutionTax`` command to calculate the pollution tax on given car.
 
 
 **Make**: Car make can now how one special string (consists of alphabet letters and '-' symbol) instead of a list of strings. Most
