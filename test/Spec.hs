@@ -1,21 +1,25 @@
 {-# LANGUAGE ImportQualifiedPost #-}
 import Test.Tasty ( TestTree, defaultMain, testGroup )
 import Test.Tasty.HUnit ( testCase, (@?=) )
+import Test.Tasty.QuickCheck as QC
 
--- import Lib1 qualified
+import Data.List
+import Data.Ord
+
+import Lib1 qualified
 import Lib2 qualified
 
 main :: IO ()
 main = defaultMain tests
 
 tests :: TestTree
-tests = testGroup "Tests" [unitTests]
+tests = testGroup "Tests" [unitTests, propertyTests]
 
 unitTests :: TestTree
 unitTests = testGroup "Lib2 tests"
   [ 
-    -- testCase "List of completions is not empty" $
-    --   null Lib1.completions @?= False,
+    testCase "List of completions is not empty" $
+      null Lib1.completions @?= False,
 
     testCase "Parsing case 1 - trying to parse query with empty input" $
       Lib2.parseQuery "" @?= Left "Cannot parse empty input",
@@ -46,4 +50,11 @@ unitTests = testGroup "Lib2 tests"
       Lib2.parseQuery "CarGarage Garage 6 Car --- w8 o Silver Sport 88kW 6Nm Electric AWD Manual 18.3l/100km 86km ( Garage UL Car Z Y Yellow Van 7.6 L Z 88kW 20Nm Turbocharged Diesel RWD Manual 4.4kWh/100km 16km ( )  ) "
         @?= Right (Lib2.CarGarage (Lib2.Garage "6" [Lib2.Car "---" "w8 o" "Silver" "Sport" (Lib2.Powertrain (Lib2.ElectricEngine 88 6) "AWD" "Manual") 18.3 86]
           [Lib2.Garage "UL" [Lib2.Car "Z" "Y" "Yellow" "Van" (Lib2.Powertrain (Lib2.FuelEngine 7.6 "Z" 88 20 "Turbocharged" "Diesel") "RWD" "Manual") 4.4 16] []]))
+  ]
+
+propertyTests :: TestTree
+propertyTests = testGroup "some meaningful name"
+  [
+    QC.testProperty "sort == sort . reverse" $
+      \list -> sort (list :: [Int]) == sort (reverse list)
   ]
