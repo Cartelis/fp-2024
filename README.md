@@ -22,8 +22,12 @@ The operations include adding/removing a car to/from the garage, editing informa
 <inner_garage> ::= <garage> | <garage> <inner_garage> | " "
 <garage_name> ::= <string>
 
-<command> ::= <command_type> " " <car> | "EditCar " <car> "to " <car> | "ListCars" | "View"
+<command> ::= <command_type> " " <car> | "EditCar " <car> "to " <car> | "ListCars " | "View " | "Load " | "Save "
 <command_type> ::= "AddCar" | "RemoveCar" | "CalculatePollutionTax"
+
+<queryBatch> ::= "BEGIN " <queries> "END "
+<queries> ::= <query> | <query> <queries>
+<query> ::= <command> | <CarGarage>
 
 <car> ::= "Car " <make> " " <model>
 
@@ -123,3 +127,36 @@ To:
 <stringMake> ::= <letterOrMinus> | <letterOrMinus> <stringMake>
 <letterOrMinus> ::= <letter> | "-"
 ```
+
+### Changes to Lab. 2 code for Lab. 3
+
+**parseQuery**: Added a return string (what is left after parsing) for parseStatements to work correctly.
+
+**module Lib2**: Updated the list of exported parsers and commands to reuse them in Lib3.
+
+**parseListCars** and **parseView**: Added a space at the end (needed for Batch of statements). In order to differentiate where one query ends and other begins.
+
+### Changes to BNF for Lab. 3
+**command**: 
+1. Added a space (' ') to "ListCars" and "View" (i.e., "ListCars" -> "ListCars " and "View" -> "View ").  
+Explained why in the Section: *Changes to Lab. 2 code for Lab. 3*, Line: *parseListCars and parseView*. 
+2. Implemented "Load " and "Save " (space at the end) commands.  
+Usage: 
+    * after using "Load " it returns to terminal, whether loading content from a file and state was successful:
+        ```
+        >>> Load 
+        Successfully loaded content from file
+        State loaded
+        ```
+    * after using "Save " it returns to terminal, whether saving content to a file and state was successful:
+        ```
+        >>> Save 
+        Successfully saved content
+        State saved
+        ```
+
+**queryBatch**: Added syntax for grouping queries (batch processing). My queries are seperated by space (i.e., "BEGIN query1 query2 END ").  
+Examples:
+1. BEGIN ListCars END 
+2. BEGIN ListCars CarGarage Garage UniqueCars Car Toyotas Supra Mk5 Green Sport 3.0 L I6 310kW 730Nm Turbocharged Petrol RWD Manual 9.7l/100km 24695km ( ) END 
+3. BEGIN AddCar Car BMW 535d Black Sedan 3.0 L I6 250kW 820Nm Turbocharged Diesel RWD Automatic 276175km AddCar Car Tesla Model 3 Gray Sedan 208kW 420Nm Electric AWD Automatic 14.7kWh/100km 63km CalculatePollutionTax Car BMW 535d Black Sedan 3.0 L I6 250kW 820Nm Turbocharged Diesel RWD Automatic 276175km ListCars END 

@@ -1,80 +1,100 @@
-CalculatePollutionTax Car Porsche 911 991 GT3 RS Yellow Sport 4.0 L Boxer6 370kW 469Nm Turbocharged Petrol RWD Automatic 17.9l/100km 42578km 
-CalculatePollutionTax Car Porsche 911 991 GT3 RS Yellow Sport 4.0 L Boxer6 110kW 469Nm Turbocharged Petrol RWD Automatic 17.9l/100km 42578km 
-CalculatePollutionTax Car Porsche 911 991 GT3 RS Yellow Sport 4.0 L Boxer6 370kW 469Nm Turbocharged Petrol RWD Automatic 17.9l/100km 42578km 
-CalculatePollutionTax Car Porsche 911 991 GT3 RS Yellow Sport 4.0 L Boxer6 140kW 469Nm Turbocharged Petrol RWD Automatic 17.9l/100km 42578km 
-CalculatePollutionTax Car Porsche 911 991 GT3 RS Yellow Sport 4.0 L Boxer6 370kW 469Nm Turbocharged Petrol RWD Automatic 17.9l/100km 42578km 
-CheckCar Car BMW M5 E60 Gold Sedan 5.0 L V10 373kW 520Nm Naturally aspirated Petrol RWD Manual 94257km 
-ListCars
-RemoveCar Car Audi RS7 Quattro Gold Sedan 4.0 L V8 412kW 700Nm Turbocharged Petrol AWD Automatic 18.7l/100km 34027km 
+stack test
+Load 
+BEGIN Load END 
+BEGIN Load CarGarage Garage 2 Car -x 6P 5 Purple Sedan 36kW 9556Nm Electric 4WD Automatic 0.6l/100km 23km ( Garage 9p Car - 6 Blue Wagon 3.8 L 3ZZ 9kW 87Nm Naturally aspirated Hydrogen RWD Manual 7.3kWh/100km 01km ( )  ) CarGarage Garage S18 Car I- 8 White Compact 64kW 54Nm Electric FWD Automatic 342km Car - l7 4 1 Blue Coupe 9kW 77Nm Electric AWD Manual 6.9kWh/100km 6km Car H- 8 2 Blue Sedan 03.1 L 6 8kW 4Nm Naturally aspirated Petrol 4WD Automatic 7.5kWh/100km 6km ( Garage 1 Car H-z zn D40 Green Convertible 3.8 L g 5143kW 387Nm Turbocharged Petrol 4WD Manual 8km Car -r 6l 75 Brown Pickup 1kW 3Nm Electric RWD Manual 1km ( Garage v Car -- O4e2 Blue Crossover 6kW 9Nm Electric FWD Manual 6km Car --- 5z Brown Coupe 6kW 2Nm Electric RWD Manual 78.1l/100km 2km ( ) ) ) END 
+BEGIN CarGarage Garage 2 Car -x 6P 5 Purple Sedan 36kW 9556Nm Electric 4WD Automatic 0.6l/100km 23km ( Garage 9p Car - 6 Blue Wagon 3.8 L 3ZZ 9kW 87Nm Naturally aspirated Hydrogen RWD Manual 7.3kWh/100km 01km ( )  ) CarGarage Garage S18 Car I- 8 White Compact 64kW 54Nm Electric FWD Automatic 342km Car - l7 4 1 Blue Coupe 9kW 77Nm Electric AWD Manual 6.9kWh/100km 6km Car H- 8 2 Blue Sedan 03.1 L 6 8kW 4Nm Naturally aspirated Petrol 4WD Automatic 7.5kWh/100km 6km ( Garage 1 Car H-z zn D40 Green Convertible 3.8 L g 5143kW 387Nm Turbocharged Petrol 4WD Manual 8km Car -r 6l 75 Brown Pickup 1kW 3Nm Electric RWD Manual 1km ( Garage v Car -- O4e2 Blue Crossover 6kW 9Nm Electric FWD Manual 6km Car --- 5z Brown Coupe 6kW 2Nm Electric RWD Manual 78.1l/100km 2km ( ) ) ) END 
+BEGIN Load CarGarage Garage 2 Car -x 6P 5 Purple Sedan 36kW 9556Nm Electric 4WD Automatic 0.6l/100km 23km ( Garage 9p Car - 6 Blue Wagon 3.8 L 3ZZ 9kW 87Nm Naturally aspirated Hydrogen RWD Manual 7.3kWh/100km 01km ( )  ) CarGarage Garage S18 Car I- 8 White Compact 64kW 54Nm Electric FWD Automatic 342km Car - l7 4 1 Blue Coupe 9kW 77Nm Electric AWD Manual 6.9kWh/100km 6km Car H- 8 2 Blue Sedan 03.1 L 6 8kW 4Nm Naturally aspirated Petrol 4WD Automatic 7.5kWh/100km 6km ( Garage 1 Car H-z zn D40 Green Convertible 3.8 L g 5143kW 387Nm Turbocharged Petrol 4WD Manual 8km Car -r 6l 75 Brown Pickup 1kW 3Nm Electric RWD Manual 1km ( Garage v Car -- O4e2 Blue Crossover 6kW 9Nm Electric FWD Manual 6km Car --- 5z Brown Coupe 6kW 2Nm Electric RWD Manual 78.1l/100km 2km ( ) ) ) END 
+BEGIN CarGarage Garage 1 Car W- 7H 7D 16 Silver Sport 5kW 200Nm Electric FWD Manual 1.3l/100km 1km ( ) CarGarage Garage 8 Car - 5 Gold Hatchback 9.8 L L 1kW 5Nm Supercharged Hydrogen FWD Automatic 7.1l/100km 5km ( ) ListCars END 
+ListCars 
+View 
+Save 
+View 
+Load 
+View 
+BEGIN CarGarage Garage 1 Car - 7 Gray Convertible 5.1 L L 66kW 295Nm Turbocharged Petrol 4WD Manual 4.8kWh/100km 1km Car fV 5 y9 Red Convertible 01.4 L 6 97kW 94Nm Turbocharged Diesel RWD Automatic 84.9l/100km 3km ( Garage p84 Car - xg Orange Off-road 436kW 82Nm Electric FWD Automatic 5km ( Garage 3 Car U- 0 Red Pickup 9.2 L 87 718kW 1Nm Supercharged Hydrogen FWD Manual 1.9kWh/100km 7km ( )  )  ) CarGarage Garage 8O Car -x 3 Orange Hatchback 0kW 61Nm Electric 4WD Automatic 6.2kWh/100km 3km Car - 8j r Silver Convertible 8kW 0Nm Electric FWD Automatic 45km ( Garage Ol Car - fl1 Blue Coupe 6kW 6Nm Electric RWD Automatic 2.0kWh/100km 80km Car - S Blue Crossover 1338kW 3Nm Electric 4WD Manual 8km Car -YAA XJA 05Y Gray Wagon 40kW 2Nm Electric 4WD Automatic 429.4l/100km 9km ( Garage P Car T 50F w Orange Sedan 3226.5 L m 0kW 8Nm Turbocharged Hydrogen FWD Automatic 0.9l/100km 7km ( )  ) ) ListCars END 
+BEGIN EditCar Car uD H5j Green Crossover 1kW 300Nm Electric FWD Automatic 3km to Car -- 3 Red SUV 28.5 L 33b 68kW 83Nm Supercharged Hydrogen 4WD Manual 2.6kWh/100km 3km END 
+BEGIN CarGarage Garage E Car - N14 k Blue Convertible 8.4 L O 0kW 3Nm Supercharged Hydrogen 4WD Automatic 4325km ( Garage O Car -j-- kY Gray Convertible 798kW 6Nm Electric 4WD Manual 573.1l/100km 5km ( Garage X Car -- B Orange Convertible 8.7 L 4G 8kW 27Nm Supercharged Diesel AWD Automatic 3.6l/100km 81km ( )  Garage I Car C P Brown Muscle 3.2 L h 4kW 7Nm Supercharged Diesel FWD Manual 8km ( Garage 60 Car - 74 Green Coupe 5kW 6Nm Electric RWD Manual 4km ( )  )  ) ) EditCar Car i- n5 Orange Muscle 015kW 52Nm Electric RWD Manual 4.0kWh/100km 3km to Car - qt 2 8 0 Yellow Crossover 61.2 L y 48kW 4Nm Naturally aspirated Petrol 4WD Automatic 7.6kWh/100km 7km END 
+BEGIN EditCar Car w- L Blue Van 47kW 2Nm Electric 4WD Manual 4km to Car s 3f 5o D Green Hatchback 4506.3 L P 9416kW 360Nm Turbocharged Petrol RWD Automatic 4.8kWh/100km 1951km ListCars CarGarage Garage d5 Car H m313 C Purple Hatchback 8.2 L 9 963kW 69Nm Naturally aspirated Petrol 4WD Automatic 376km ( Garage 3 Car - E 5 Red Off-road 9.9 L gR 7kW 9Nm Supercharged Diesel AWD Manual 180.1kWh/100km 8km ( Garage 9 Car - 89A Silver Pickup 7.8 L 3 7367kW 5Nm Supercharged Diesel FWD Manual 8.1kWh/100km 5km Car -- J Gray Van 40kW 2Nm Electric FWD Manual 2.0kWh/100km 2km ( )  ) ) END 
+BEGIN ListCars END 
+BEGIN CalculatePollutionTax Car Q 45 Brown Sedan 8kW 9Nm Electric RWD Manual 73km CalculatePollutionTax Car n 7 Brown Convertible 84.6 L Wd 211764kW 80Nm Naturally aspirated Hydrogen FWD Manual 4.7kWh/100km 2km END 
+BEGIN CalculatePollutionTax Car Q 45 Brown Sedan 8kW 9Nm Electric RWD Manual 73km CalculatePollutionTax Car n 7 Brown Convertible 84.6 L Wd 211764kW 80Nm Naturally aspirated Hydrogen FWD Manual 4.7kWh/100km 2km  END 
+Load
+END 
+View 
+ListCars 
+BEGIN 
+:paste
+View 
+:paste
+BEGIN ListCars View END 
+View 
+Load
+View 
+:paste
+View 
+View 
+:paste
+END 
+View 
+ListCars 
+BEGIN 
+:paste
+BEGIN ListCars View END 
+View 
 View
-EditCar Car Mercedes-Benz AMG E 63 S 4MATIC Black Sedan 4.0 L V8 450kW 850Nm Turbocharged Petrol AWD Automatic 23.6l/100km 27602km to Car Audi RS7 Quattro Gold Sedan 4.0 L V8 412kW 700Nm Turbocharged Petrol AWD Automatic 18.7l/100km 34027km 
-ListCars
+Load
+View 
+ListCars 
+:paste
+View 
+ListCars 
+View 
 View
-CarGarage Garage TopSecret Car Mercedes-Benz AMG E 63 S 4MATIC Black Sedan 4.0 L V8 450kW 850Nm Turbocharged Petrol AWD Automatic 23.6l/100km 27602km Car BMW M5 CS Green Sedan 4.4 L V8 465kW 860Nm Turbocharged Petrol AWD Automatic 20.8l/100km 152482km ( Garage GRToyota Car Toyota Supra GR Electric White Sport 350kW 700Nm Electric 4WD Automatic 74342km ( ) ) 
+ListCars 
+:paste 
+:paste
+View 
+ListCars 
+:paste
+View 
+:paste
+View 
+Load
+View 
+View 
 View
-View
-view
-View
-ListCars
-AddCar Car BMW M5 E60 Gold Sedan 5.0 L V10 373kW 520Nm Naturally aspirated Petrol RWD Manual 94257km 
-CheckCar Car BMW M5 E60 Gold Sedan 5.0 L V10 373kW 520Nm Naturally aspirated Petrol RWD Manual 94257km 
-CheckCar Car BMW M5 E60 Gold Sedan 
-AddCar Car BMW M5 E60 Gold Sedan 
-AddCar Car BMW m5 Gold Sedan 
-AddCar Car BMW m5 Gold Sedan
-AddCar Car BMW m5 
-AddCar Car BMW m5
-addCar Car Behas
-ListCars
-View
-RemoveCar Car Audi RS7 Quattro Gold Sedan 4.0 L V8 412kW 700Nm Turbocharged Petrol AWD Automatic 18.7l/100km 34027km 
-ListCars
-AddCar Car Porsche 911 991 GT3 RS Yellow Sport 4.0 L Boxer6 370kW 469Nm Turbocharged Petrol RWD Automatic 17.9l/100km 42578km 
-View
-ListCars
-EditCar Car Mercedes-Benz AMG E 63 S 4MATIC Black Sedan 4.0 L V8 450kW 850Nm Turbocharged Petrol AWD Automatic 23.6l/100km 27602km to Car Audi RS7 Quattro Gold Sedan 4.0 L V8 412kW 700Nm Turbocharged Petrol AWD Automatic 18.7l/100km 34027km 
-View
-CarGarage Garage TopSecret Car Mercedes-Benz AMG E 63 S 4MATIC Black Sedan 4.0 L V8 450kW 850Nm Turbocharged Petrol AWD Automatic 23.6l/100km 27602km Car BMW M5 CS Green Sedan 4.4 L V8 465kW 860Nm Turbocharged Petrol AWD Automatic 20.8l/100km 152482km ( Garage GRToyota Car Toyota Supra GR Electric White Sport 350kW 700Nm Electric 4WD Automatic 74342km ( ) ) 
-ListCars
-View
-CarGarage Garage TopSecret Car Mercedes-Benz AMG E 63 S 4MATIC Black Sedan 4.0 L V8 450kW 850Nm Turbocharged Petrol AWD Automatic 23.6l/100km 27602km Car BMW M5 CS Green Sedan 4.4 L V8 465kW 860Nm Turbocharged Petrol AWD Automatic 20.8l/100km 152482km ( Garage GRToyota Car Toyota Supra GR Electric White Sport 350kW 700Nm Electric 4WD Automatic 74342km ( ) ) 
-View
-CarGarage Garage TopSecret Car Mercedes-Benz AMG E 63 S 4MATIC Black Sedan 4.0 L V8 450kW 850Nm Turbocharged Petrol AWD Automatic 23.6l/100km 27602km Car BMW M5 CS Green Sedan 4.4 L V8 465kW 860Nm Turbocharged Petrol AWD Automatic 20.8l/100km 152482km ( Garage GRToyota Car Toyota Supra GR Electric White Sport 350kW 700Nm Electric 4WD Automatic 74342km ( ) ) 
-ListCars
-View
-ListCars
-View
-CarGarage Garage TopSecret Car Mercedes-Benz AMG E 63 S 4MATIC Black Sedan 4.0 L V8 450kW 850Nm Turbocharged Petrol AWD Automatic 23.6l/100km 27602km Car BMW M5 CS Green Sedan 4.4 L V8 465kW 860Nm Turbocharged Petrol AWD Automatic 20.8l/100km 152482km ( Garage GRToyota Car Toyota Supra GR Electric White Sport 350kW 700Nm Electric 4WD Automatic 74342km ( ) ) 
-View
-View
-View
-ListCars
-View
-CarGarage Garage TopSecret Car Mercedes-Benz AMG E 63 S 4MATIC Black Sedan 4.0 L V8 450kW 850Nm Turbocharged Petrol AWD Automatic 23.6l/100km 27602km Car BMW M5 CS Green Sedan 4.4 L V8 465kW 860Nm Turbocharged Petrol AWD Automatic 20.8l/100km 152482km ( Garage GRToyota Car Toyota Supra GR Electric White Sport 350kW 700Nm Electric 4WD Automatic 74342km ( ) ) 
-View
-CarGarage Garage TopSecret Car Mercedes-Benz AMG E 63 S 4MATIC Black Sedan 4.0 L V8 450kW 850Nm Turbocharged Petrol AWD Automatic 23.6l/100km 27602km Car BMW M5 CS Green Sedan 4.4 L V8 465kW 860Nm Turbocharged Petrol AWD Automatic 20.8l/100km 152482km ( Garage GRToyota Car Toyota Supra GR Electric White Sport 350kW 700Nm Electric 4WD Automatic 74342km ()  ) 
-View
-CarGarage Garage TopSecret Car Mercedes-Benz AMG E 63 S 4MATIC Black Sedan 4.0 L V8 450kW 850Nm Turbocharged Petrol AWD Automatic 23.6l/100km 27602km Car BMW M5 CS Green Sedan 4.4 L V8 465kW 860Nm Turbocharged Petrol AWD Automatic 20.8l/100km 152482km ( Garage GRToyota Car Toyota Supra GR Electric White Sport 350kW 700Nm Electric 4WD Automatic 74342km () ) 
-View
-CarGarage Garage TopSecret Car Mercedes-Benz AMG E 63 S 4MATIC Black Sedan 4.0 L V8 450kW 850Nm Turbocharged Petrol AWD Automatic 23.6l/100km 27602km Car BMW M5 CS Green Sedan 4.4 L V8 465kW 860Nm Turbocharged Petrol AWD Automatic 20.8l/100km 152482km ( ) 
-View
-ListCars
-EditCar Car Merc GLA Black SUV 250kW 680Nm Electric AWD Automatic 5246km to Car BMW M5 CS Green Sedan 4.4 L V8 465kW 860Nm Turbocharged Petrol AWD Automatic 20.8l/100km 152482km 
-ListCars
-RemoveCar Car Audi S5 Red Sport 3.6 L V6 325kW 730Nm Supercharged Petrol AWD Automatic 18l/100km 5246km 
-ListCars
-View
-AddCar Car Audi S5 Red Sport 3.6 L V6 325kW 730Nm Supercharged Petrol AWD Automatic 18l/100km 5246km 
-View
-AddCar Car Merc GLA Black SUV 250kW 680Nm Electric AWD Automatic 5246km 
-AddCar Merc GLA Black SUV 250kW 680Nm Electric AWD Automatic 5246km 
-View
-main 
-main 
-ListCars
-main
-cmd
-ListCars
-View
-main
-View
+View 
+View 
+;
+View 
+:paste
+;
+View 
+:paste
+;
+View 
+:paste
+View 
+ListCars 
+:paste
+View 
+:paste
+View 
+:paste
+View 
+Load
+:paste
+Load
+:paste
+:q
+:q
+:q
+Load :q
+:paste
+Load
+:paste
+Load
+:paste
+Load
+:paste
+Op 

@@ -1,0 +1,34 @@
+>>> CarGarage Garage 1 Car X x 4 0Z Red SUV 1kW 57Nm Electric RWD Manual 284.5kWh/100km 5km ( Garage x Car --- 6 1 h Silver Coupe 1.4 L 6z 2kW 96Nm Turbocharged Diesel RWD Manual 1.4l/100km 8km Car - 938 Gray Off-road 7.6 L 64 2kW 84Nm Naturally aspirated Petrol 4WD Automatic 5.7kWh/100km 54km ( Garage 04b9 Car -- sO White Sedan 9kW 7Nm Electric 4WD Automatic 02.8l/100km 7km ( ) ) ) 
+Success: CarGarage state updated!
+
+>>> BEGIN ListCars View END 
+Success: Listing cars: [Car {make = "X", model = "x 4 0Z", color = "Red", body_type = "SUV", powertrain = Powertrain {engine = ElectricEngine {power = 1, torque = 57}, drive_type = "RWD", transmission = "Manual"}, consumption = 284.5, mileage = 5},Car {make = "---", model = "6 1 h", color = "Silver", body_type = "Coupe", powertrain = Powertrain {engine = FuelEngine {displacement = 1.4, engineLayout = "6z", power = 2, torque = 96, induction = "Turbocharged", fuel = "Diesel"}, drive_type = "RWD", transmission = "Manual"}, consumption = 1.4, mileage = 8},Car {make = "-", model = "938", color = "Gray", body_type = "Off-road", powertrain = Powertrain {engine = FuelEngine {displacement = 7.6, engineLayout = "64", power = 2, torque = 84, induction = "Naturally aspirated", fuel = "Petrol"}, drive_type = "4WD", transmission = "Automatic"}, consumption = 5.7, mileage = 54},Car {make = "--", model = "sO", color = "White", body_type = "Sedan", powertrain = Powertrain {engine = ElectricEngine {power = 9, torque = 7}, drive_type = "4WD", transmission = "Automatic"}, consumption = 2.8, mileage = 7}]
+Success: Current state: State {stateGarage = Garage {garage_name = "1", cars = [Car {make = "X", model = "x 4 0Z", color = "Red", body_type = "SUV", powertrain = Powertrain {engine = ElectricEngine {power = 1, torque = 57}, drive_type = "RWD", transmission = "Manual"}, consumption = 284.5, mileage = 5}], inner_garage = [Garage {garage_name = "x", cars = [Car {make = "---", model = "6 1 h", color = "Silver", body_type = "Coupe", powertrain = Powertrain {engine = FuelEngine {displacement = 1.4, engineLayout = "6z", power = 2, torque = 96, induction = "Turbocharged", fuel = "Diesel"}, drive_type = "RWD", transmission = "Manual"}, consumption = 1.4, mileage = 8},Car {make = "-", model = "938", color = "Gray", body_type = "Off-road", powertrain = Powertrain {engine = FuelEngine {displacement = 7.6, engineLayout = "64", power = 2, torque = 84, induction = "Naturally aspirated", fuel = "Petrol"}, drive_type = "4WD", transmission = "Automatic"}, consumption = 5.7, mileage = 54}], inner_garage = [Garage {garage_name = "04b9", cars = [Car {make = "--", model = "sO", color = "White", body_type = "Sedan", powertrain = Powertrain {engine = ElectricEngine {power = 9, torque = 7}, drive_type = "4WD", transmission = "Automatic"}, consumption = 2.8, mileage = 7}], inner_garage = []}]}]}}
+Batch of queries proccessed succesfully
+
+>>> Save 
+Successfully saved content
+State saved
+
+-------Restarting terminal-------
+>>> Load 
+Successfully loaded content from file
+State loaded
+
+>>> BEGIN RemoveCar Car X x 4 0Z Red SUV 1kW 57Nm Electric RWD Manual 284.5kWh/100km 5km AddCar Car v- t8 Green Muscle 6kW 0962Nm Electric FWD Automatic 9.9l/100km 8km ListCars END 
+Success: Car removed!
+Success: Car added!
+Success: Listing cars: [Car {make = "v-", model = "t8", color = "Green", body_type = "Muscle", powertrain = Powertrain {engine = ElectricEngine {power = 6, torque = 962}, drive_type = "FWD", transmission = "Automatic"}, consumption = 9.9, mileage = 8},Car {make = "---", model = "6 1 h", color = "Silver", body_type = "Coupe", powertrain = Powertrain {engine = FuelEngine {displacement = 1.4, engineLayout = "6z", power = 2, torque = 96, induction = "Turbocharged", fuel = "Diesel"}, drive_type = "RWD", transmission = "Manual"}, consumption = 1.4, mileage = 8},Car {make = "-", model = "938", color = "Gray", body_type = "Off-road", powertrain = Powertrain {engine = FuelEngine {displacement = 7.6, engineLayout = "64", power = 2, torque = 84, induction = "Naturally aspirated", fuel = "Petrol"}, drive_type = "4WD", transmission = "Automatic"}, consumption = 5.7, mileage = 54},Car {make = "--", model = "sO", color = "White", body_type = "Sedan", powertrain = Powertrain {engine = ElectricEngine {power = 9, torque = 7}, drive_type = "4WD", transmission = "Automatic"}, consumption = 2.8, mileage = 7}]
+Batch of queries proccessed succesfully
+
+>>> Save 
+Successfully saved content
+State saved
+
+-------Restarting terminal-------
+>>> Load 
+Successfully loaded content from file
+State loaded
+
+>>> View 
+Success: Current state: State {stateGarage = Garage {garage_name = "1", cars = [Car {make = "v-", model = "t8", color = "Green", body_type = "Muscle", powertrain = Powertrain {engine = ElectricEngine {power = 6, torque = 962}, drive_type = "FWD", transmission = "Automatic"}, consumption = 9.9, mileage = 8}], inner_garage = [Garage {garage_name = "x", cars = [Car {make = "---", model = "6 1 h", color = "Silver", body_type = "Coupe", powertrain = Powertrain {engine = FuelEngine {displacement = 1.4, engineLayout = "6z", power = 2, torque = 96, induction = "Turbocharged", fuel = "Diesel"}, drive_type = "RWD", transmission = "Manual"}, consumption = 1.4, mileage = 8},Car {make = "-", model = "938", color = "Gray", body_type = "Off-road", powertrain = Powertrain {engine = FuelEngine {displacement = 7.6, engineLayout = "64", power = 2, torque = 84, induction = "Naturally aspirated", fuel = "Petrol"}, drive_type = "4WD", transmission = "Automatic"}, consumption = 5.7, mileage = 54}], inner_garage = [Garage {garage_name = "04b9", cars = [Car {make = "--", model = "sO", color = "White", body_type = "Sedan", powertrain = Powertrain {engine = ElectricEngine {power = 9, torque = 7}, drive_type = "4WD", transmission = "Automatic"}, consumption = 2.8, mileage = 7}], inner_garage = []}]}]}}

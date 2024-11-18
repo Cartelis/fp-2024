@@ -9,6 +9,13 @@ module Lib2
     Car(..),
     Powertrain(..),
     Engine(..),
+    parseAlphaNumWhitespaceOrdered,
+    parseText,
+    and2',
+    many,
+    parseCarWithPrefix,
+    parseListOfCars,
+    parseCarGarage,
     ) where
 
 
@@ -638,7 +645,8 @@ parseEditCar input =
 parseView :: Parser Query
 parseView [] = Left "Cannot parse empty input"
 parseView input =
-    case parseText input of
+    -- case parseText input of
+    case parseAlphaNumWhitespaceOrdered input of
         Right (word, r1) ->
             if word == "View"
                 then Right (View, r1)
@@ -649,7 +657,8 @@ parseView input =
 parseListCars :: Parser Query
 parseListCars [] = Left "Cannot parse empty input"
 parseListCars input =
-    case parseText input of
+    -- case parseText input of
+    case parseAlphaNumWhitespaceOrdered input of
         Right (word, r1) ->
             if word == "ListCars"
                 then Right(ListCars, r1)
@@ -659,11 +668,11 @@ parseListCars input =
 
 -- | Parses user's input.
 -- The function must have tests.
-parseQuery :: String -> Either String Query
+parseQuery :: String -> Either String (Query, String)
 parseQuery [] = Left "Cannot parse empty input"
 parseQuery input =
     case or2 parseCarGarage parseCommand input of
-        Right (query, _) -> Right query
+        Right (query, r) -> Right (query, r)
         -- _ -> Left "Failed to parse query: Unknown command"
         Left e -> Left ("Failed to parse query: " ++ e)
 

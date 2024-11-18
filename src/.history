@@ -1,0 +1,52 @@
+View 
+Load
+CalculatePollutionTax Car -- G1 x16I8 White Coupe 779kW 4Nm Electric AWD Automatic 16.6kWh/100km 667km 
+CalculatePollutionTax Car -- G1 x16I8 White Coupe 79kW 4Nm Electric AWD Automatic 16.6kWh/100km 667km 
+ListCars 
+View 
+View
+RemoveCar Car -- G1 x16I8 White Coupe 79kW 4Nm Electric AWD Automatic 16.6kWh/100km 667km 
+View 
+View
+EditCar Car Y-- 38 Orange Crossover 8kW 09Nm Electric 4WD Automatic 220.1kWh/100km 1km to Car -- G1 x16I8 White Coupe 79kW 4Nm Electric AWD Automatic 16.6kWh/100km 667km 
+Save
+View 
+Load
+View 
+Load
+Save
+View 
+CarGarage Garage l Car Y-- 38 Orange Crossover 8kW 09Nm Electric 4WD Automatic 220.1kWh/100km 1km ( ) 
+View 
+View
+Load
+Save
+View 
+CarGarage Garage l Car Y-- 38 Orange Crossover 8kW 09Nm Electric 4WD Automatic 220.1kWh/100km 1km ( ) 
+View 
+Load
+Save
+Load
+END 
+ListCars 
+View 
+BEGIN 
+:paste
+BEGIN
+:paste
+END
+ListCars 
+View
+BEGIN
+:paste
+BEGIN View ListCars END
+:paste
+BEGIN View ListCars END
+:paste
+ListCars 
+View 
+View
+AddCar Car - 8X4 4 Silver Sport 792kW 176Nm Electric AWD Automatic 97km 
+ListCars 
+View 
+View
