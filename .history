@@ -1,3 +1,14 @@
+View 
+Load 
+Save 
+View 
+END 
+ListCars 
+CarGarage Garage UniqueCars Car Toyotas Supra Mk5 Green Sport 3.0 L I6 310kW 730Nm Turbocharged Petrol RWD Manual 9.7l/100km 24695km ( ) 
+BEGIN 
+:paste
+View 
+Load 
 stack test
 Load 
 BEGIN Load END 
@@ -87,14 +98,3 @@ Load
 Load
 :paste
 :q
-:q
-:q
-Load :q
-:paste
-Load
-:paste
-Load
-:paste
-Load
-:paste
-Op 
