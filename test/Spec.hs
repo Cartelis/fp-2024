@@ -1,4 +1,4 @@
-{-# LANGUAGE ImportQualifiedPost #-}
+-- {-# LANGUAGE ImportQualifiedPost #-}
 import Test.Tasty ( TestTree, defaultMain, testGroup )
 import Test.Tasty.HUnit ( testCase, (@?=) )
 import Test.Tasty.QuickCheck as QC
