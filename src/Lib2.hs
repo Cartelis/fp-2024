@@ -1,4 +1,5 @@
 {-# LANGUAGE InstanceSigs #-}
+{-# LANGUAGE FlexibleInstances #-}
 module Lib2
     ( Query(..),
     parseQuery,
@@ -63,6 +64,31 @@ instance Show Query where
         "A list of cars in main garage"
     show (CalculatePollutionTax _) = ""
 
+instance Show State where
+    show (State garageInState) = show garageInState
+
+instance Show Garage where
+    show (Garage g_name carList inner_g) =
+        "Garage name: " ++ g_name ++ "\n" ++
+        "Cars: \n" ++ concatMap (\car -> "   " ++ show car ++ "\n") carList ++
+        "Inner garages: " ++ show inner_g++ "\n"
+
+instance Show Car where
+    show (Car carMake carModel carColor carBody_type carPowertrain carConsumption carMileage) =
+        carMake ++ " " ++ carModel ++ " " ++ carColor ++ " " ++ carBody_type ++ " " ++
+        show carPowertrain ++ " " ++ (if carConsumption > 0 then show carConsumption ++ "l/100km (kWh/100km) " else "") ++ show carMileage ++ "km"
+
+instance Show Powertrain where
+    show (Powertrain carEngine carDrive_type carTransmission) =
+        show carEngine ++ " " ++ carDrive_type ++ " " ++ carTransmission
+
+instance Show Engine where
+    show (FuelEngine carDisplacement carEngineLayout carPower carTorque carInduction carFuel) =
+        show carDisplacement ++ " L " ++ carEngineLayout ++ " " ++ show carPower ++ "kW " ++
+            show carTorque ++ "Nm " ++ carInduction ++ " " ++ carFuel 
+    show (ElectricEngine carPower carTorque) =
+        show carPower ++ "kW " ++ show carTorque ++ "Nm"
+
 type Parser a = String -> Either String (a, String)
 
 data Engine
@@ -78,13 +104,13 @@ data Engine
         power :: Integer,
         torque :: Integer
     }
-    deriving (Show, Eq)
+    deriving Eq
 
 data Powertrain = Powertrain {
     engine :: Engine,
     drive_type :: String,
     transmission :: String
-} deriving (Show, Eq)
+} deriving Eq
 
 data Car = Car {
     make :: String,
@@ -94,13 +120,13 @@ data Car = Car {
     powertrain :: Powertrain,
     consumption :: Double,
     mileage:: Integer
-} deriving (Show, Eq)
+} deriving Eq
 
 data Garage = Garage {
     garage_name :: String,
     cars :: [Car],
     inner_garage :: [Garage]
-} deriving (Show, Eq)
+} deriving Eq
 
 colorList :: [String]
 colorList = ["Red", "Black", "Gray", "White", "Blue", "Silver", "Green", "Brown", "Orange", "Yellow", "Gold", "Purple"]
@@ -390,7 +416,7 @@ trimTrailing = reverse . dropWhile C.isSpace . reverse
 
 -- <model_name> ::= <string> " " | <string> " " <model_name>
 parseModelName :: Parser String
-parseModelName input = 
+parseModelName input =
     case parseModelName' input of
         Right (stringList, r) -> Right (trimTrailing (concatStringListToString stringList), r)
         Left e -> Left e
@@ -628,7 +654,7 @@ parseEditCar input =
         Right (word1, r1) ->
             if word1 == "EditCar"
                 then case parseCarWithPrefix r1 of
-                    Right (oldCar, r2) -> 
+                    Right (oldCar, r2) ->
                         case parseAlphaNumWhitespaceOrdered r2 of
                             Right (word2, r3) ->
                                 if word2 == "to"
@@ -661,7 +687,7 @@ parseListCars input =
     case parseAlphaNumWhitespaceOrdered input of
         Right (word, r1) ->
             if word == "ListCars"
-                then Right(ListCars, r1)
+                then Right (ListCars, r1)
                 else Left "Given command not found"
         Left e1 -> Left e1
 
@@ -682,7 +708,7 @@ parseQuery input =
 -- as many as needed.
 data State = State {
     stateGarage :: Garage
-} deriving (Show, Eq)
+} deriving Eq
 
 
 -- | Creates an initial program's state.
@@ -740,7 +766,7 @@ calculatePollutionTaxOnEngine givenEngine
 -- an updated program's state.
 stateTransition :: State -> Query -> Either String (Maybe String, State)
 -- stateTransition _ _ = Left "Not implemented 3"
-stateTransition state (CarGarage garage) = 
+stateTransition state (CarGarage garage) =
     let
         newState = state { stateGarage = garage }
     in
@@ -790,4 +816,4 @@ stateTransition state (CalculatePollutionTax givenCar) =
 
 
 stateTransition state View =
-    Right (Just ("Current state: " ++ show state), state)
+    Right (Just ("Current state: \n" ++ show state), state)

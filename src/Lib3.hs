@@ -223,7 +223,12 @@ stateTransition stateVar command ioChan = do
 
       if isLeft result
         then return $ Left "Query failed."
-        else return $ Right Nothing
+        -- else return $ Right Nothing
+        else
+          case result of 
+            Right (Just msg) -> return $ Right (Just msg)
+            Right Nothing -> return $ Right Nothing
+            Left errMsg -> return $ Left errMsg
 
 
     LoadCommand -> do
@@ -235,7 +240,7 @@ stateTransition stateVar command ioChan = do
           case parsedState of
             Single (Lib2.CarGarage stateGarage) -> do
               atomically $ writeTVar stateVar $ Lib2.State stateGarage
-              return $ Right $ Just "State loaded"
+              return $ Right $ Just "State loaded\n"
             _ -> return $ Left "Failed to load state from the file"
         Left _ ->
           return $ Left "Failed to parse the loaded state"
@@ -251,7 +256,7 @@ stateTransition stateVar command ioChan = do
       writeChan ioChan (Save statementsAsString responceChan)
       -- Waiting for response
       _ <- readChan responceChan
-      return $ Right $ Just "State saved"
+      return $ Right $ Just "State saved\n"
 
 
 processSingleQuery :: TVar Lib2.State -> Lib2.Query -> STM (Either String (Maybe String))
