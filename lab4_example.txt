@@ -1,0 +1,190 @@
+#1 Showing lock functionality
+main :: IO ()
+main = do
+    -- For testing/showing httpLock functionality 
+    putStrLn "Test start"
+    simulateRequests
+    putStrLn "Test end"
+    return ()
+
+#Result:
+Client:
+    Test start
+    Making request: "Request 1"
+    Received response for: "Request 1"
+    Making request: "Request 2"
+    Received response for: "Request 2"
+    Making request: "Request 3"
+    Received response for: "Request 3"
+    Test end
+
+Server:
+    Request was: Request 1
+
+    Request was: Request 2
+
+    Request was: Request 3
+
+
+
+
+#2 Test interpreter with seperate file: "data"
+program :: MyDomain String
+program = do
+    load
+    add "BMW M850i Black Coupe 4.4 L V8 390kW 750Nm Turbocharged Petrol AWD Automatic 18153km"
+    edit "BMW M850i Black Coupe 4.4 L V8 390kW 750Nm Turbocharged Petrol AWD Automatic 18153km" "Mercedes-Benz AMG E 63 S 4MATIC Black Sedan 4.0 L V8 450kW 850Nm Turbocharged Petrol AWD Automatic 23.6l/100km 27602km"
+    -- remove "Mercedes-Benz AMG E 63 S 4MATIC Black Sedan 4.0 L V8 450kW 850Nm Turbocharged Petrol AWD Automatic 23.6l/100km 27602km"
+    finalState <- viewState
+    return finalState
+
+main :: IO ()
+main = do
+    result <- runTest program
+    putStrLn result
+    return ()
+
+#Result:
+Client:
+    Garage name: TopSecret
+    Cars: 
+       Mercedes-Benz AMG E 63 S 4MATIC Black Sedan 4.0 L V8 450kW 850Nm Turbocharged Petrol AWD Automatic 23.6l/100km (kWh/100km) 27602km
+       BMW M5 CS Green Sedan 4.4 L V8 465kW 860Nm Turbocharged Petrol AWD Automatic 20.8l/100km (kWh/100km) 152482km
+    Inner garages: [Garage name: GRToyota
+    Cars: 
+       Toyota Supra GR Electric White Sport 350kW 700Nm 4WD Automatic 74342km
+    Inner garages: []
+    ]
+
+    (when uncommented remove in program):
+    Garage name: TopSecret
+    Cars: 
+       BMW M5 CS Green Sedan 4.4 L V8 465kW 860Nm Turbocharged Petrol AWD Automatic 20.8l/100km (kWh/100km) 152482km
+    Inner garages: [Garage name: GRToyota
+    Cars: 
+       Toyota Supra GR Electric White Sport 350kW 700Nm 4WD Automatic 74342km
+    Inner garages: []
+    ]
+
+
+
+
+#3 Http interpreter one request per command
+program :: MyDomain String
+program = do
+    load
+    edit "BMW M850i Black Coupe 4.4 L V8 390kW 750Nm Turbocharged Petrol AWD Automatic 18153km" "Mercedes-Benz AMG E 63 S 4MATIC Black Sedan 4.0 L V8 450kW 850Nm Turbocharged Petrol AWD Automatic 23.6l/100km 27602km"
+    add "Porsche 911 991 GT3 RS Yellow Sport 4.0 L Boxer6 370kW 469Nm Turbocharged Petrol RWD Automatic 17.9l/100km 42578km"
+    finalState <- viewState
+    return finalState
+
+main :: IO ()
+main = do
+    result <- runHttpOne program
+    putStrLn result
+    return ()
+
+#Result:
+Client:
+    Garage name: Krasta
+    Cars: 
+       Porsche 911 991 GT3 RS Yellow Sport 4.0 L Boxer6 370kW 469Nm Turbocharged Petrol RWD Automatic 17.9l/100km (kWh/100km) 42578km
+       Mercedes-Benz AMG E 63 S 4MATIC Black Sedan 4.0 L V8 450kW 850Nm Turbocharged Petrol AWD Automatic 23.6l/100km (kWh/100km) 27602km
+    Inner garages: []
+
+Server:
+    Request was: Load 
+    Successfully loaded content from file
+
+    Request was: EditCar Car BMW M850i Black Coupe 4.4 L V8 390kW 750Nm Turbocharged Petrol AWD Automatic 18153km to Car Mercedes-Benz AMG E 63 S 4MATIC Black Sedan 4.0 L V8 450kW 850Nm Turbocharged Petrol AWD Automatic 23.6l/100km 27602km 
+    Success: Car edited!
+
+    Request was: AddCar Car Porsche 911 991 GT3 RS Yellow Sport 4.0 L Boxer6 370kW 469Nm Turbocharged Petrol RWD Automatic 17.9l/100km 42578km 
+    Success: Car added!
+
+    Request was: View 
+    Success: Current state: 
+    Garage name: Krasta
+    Cars: 
+       Porsche 911 991 GT3 RS Yellow Sport 4.0 L Boxer6 370kW 469Nm Turbocharged Petrol RWD Automatic 17.9l/100km (kWh/100km) 42578km
+       Mercedes-Benz AMG E 63 S 4MATIC Black Sedan 4.0 L V8 450kW 850Nm Turbocharged Petrol AWD Automatic 23.6l/100km (kWh/100km) 27602km
+    Inner garages: []
+
+
+
+
+#4 Http interpreter one request per command (WITH LOCK)
+(program stays the same)
+
+main :: IO ()
+main = do
+    result <- runHttpRequest runHttpOne program
+    putStrLn result
+    return ()
+
+#Result:
+(Results are the same)
+
+
+
+
+#5.1 Smart http interpreter (WITH LOCK)
+program :: MyDomain String
+program = do
+    load
+    edit "BMW M850i Black Coupe 4.4 L V8 390kW 750Nm Turbocharged Petrol AWD Automatic 18153km" "Mercedes-Benz AMG E 63 S 4MATIC Black Sedan 4.0 L V8 450kW 850Nm Turbocharged Petrol AWD Automatic 23.6l/100km 27602km"
+    add "Porsche 911 991 GT3 RS Yellow Sport 4.0 L Boxer6 370kW 469Nm Turbocharged Petrol RWD Automatic 17.9l/100km 42578km"
+    finalState <- viewState
+    return finalState
+
+main :: IO ()
+main = do
+    result <- runHttpRequest runHttpSmart program
+    putStrLn result
+    return ()
+
+#Result:
+Client:
+    Garage name: Krasta
+    Cars: 
+       Porsche 911 991 GT3 RS Yellow Sport 4.0 L Boxer6 370kW 469Nm Turbocharged Petrol RWD Automatic 17.9l/100km (kWh/100km) 42578km
+       Mercedes-Benz AMG E 63 S 4MATIC Black Sedan 4.0 L V8 450kW 850Nm Turbocharged Petrol AWD Automatic 23.6l/100km (kWh/100km) 27602km
+    Inner garages: []
+
+Server:
+    Request was: Load 
+    Successfully loaded content from file
+
+    Request was: GetState
+
+    Request was: CarGarage Garage Krasta Car Porsche 911 991 GT3 RS Yellow Sport 4.0 L Boxer6 370kW 469Nm Turbocharged Petrol RWD Automatic 17.9l/100km 42578km Car Mercedes-Benz AMG E 63 S 4MATIC Black Sedan 4.0 L V8 450kW 850Nm Turbocharged Petrol AWD Automatic 23.6l/100km 27602km ( ) 
+    Success: CarGarage state updated!
+
+    Request was: Save 
+    Successfully saved content
+
+#5.2 Same states, no need to update
+program :: MyDomain String
+program = do
+    load
+    finalState <- viewState
+    return finalState
+
+Client:
+    Garage name: Krasta
+    Cars: 
+       Porsche 911 991 GT3 RS Yellow Sport 4.0 L Boxer6 370kW 469Nm Turbocharged Petrol RWD Automatic 17.9l/100km (kWh/100km) 42578km
+       Mercedes-Benz AMG E 63 S 4MATIC Black Sedan 4.0 L V8 450kW 850Nm Turbocharged Petrol AWD Automatic 23.6l/100km (kWh/100km) 27602km
+    Inner garages: []
+
+Server:
+    Request was: Load 
+    Successfully loaded content from file
+
+    Request was: GetState
+
+
+
+
+#Initial storage.txt:
+CarGarage Garage Krasta Car BMW M850i Black Coupe 4.4 L V8 390kW 750Nm Turbocharged Petrol AWD Automatic 18153km ( ) 

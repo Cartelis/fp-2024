@@ -78,13 +78,20 @@ program :: MyDomain String
 program = do
     -- _ <- viewState
     -- carGarage "TopSecret Car BMW M5 CS Green Sedan 4.4 L V8 465kW 860Nm Turbocharged Petrol AWD Automatic 20.8l/100km 152482km ( Garage GRToyota Car Toyota Supra GR Electric White Sport 350kW 700Nm Electric 4WD Automatic 74342km ( ) )"
+    
     load
+    
     -- add "BMW M850i Black Coupe 4.4 L V8 390kW 750Nm Turbocharged Petrol AWD Automatic 18153km"
     -- _ <- viewState
-    -- edit "BMW M850i Black Coupe 4.4 L V8 390kW 750Nm Turbocharged Petrol AWD Automatic 18153km" "Mercedes-Benz AMG E 63 S 4MATIC Black Sedan 4.0 L V8 450kW 850Nm Turbocharged Petrol AWD Automatic 23.6l/100km 27602km"
+    
+    edit "BMW M850i Black Coupe 4.4 L V8 390kW 750Nm Turbocharged Petrol AWD Automatic 18153km" "Mercedes-Benz AMG E 63 S 4MATIC Black Sedan 4.0 L V8 450kW 850Nm Turbocharged Petrol AWD Automatic 23.6l/100km 27602km"
+    
     -- remove "Mercedes-Benz AMG E 63 S 4MATIC Black Sedan 4.0 L V8 450kW 850Nm Turbocharged Petrol AWD Automatic 23.6l/100km 27602km"
     -- returnedCars <- listCars
     -- add "Mercedes-Benz AMG E 63 S 4MATIC Black Sedan 4.0 L V8 450kW 850Nm Turbocharged Petrol AWD Automatic 23.6l/100km 27602km"
+    
+    add "Porsche 911 991 GT3 RS Yellow Sport 4.0 L Boxer6 370kW 469Nm Turbocharged Petrol RWD Automatic 17.9l/100km 42578km"
+    
     -- cars <- listCars
     finalState <- viewState
     -- save
@@ -247,14 +254,14 @@ runHttpSmart p = do
 
     let rawRequestGetState = cs "GetState" :: ByteString
     serverState <- post "http://localhost:3000" rawRequestGetState
-    putStrLn $ "\n\nServer state before: " ++ cs (serverState ^. responseBody)
+    -- putStrLn $ "\n\nServer state before: " ++ cs (serverState ^. responseBody)
 
     let serverStateString = cs (serverState ^. responseBody)
 
     result <- runHttpSmart' v serverStateString p
 
     finalState <- readIORef v
-    putStrLn $ "\n\nTest state after: " ++ show finalState
+    -- putStrLn $ "\n\nTest state after: " ++ show finalState
 
     let finalStateString = Lib3.renderStatements (Lib3.marshallState finalState)
 
@@ -263,13 +270,14 @@ runHttpSmart p = do
         else do
             let rawRequestCarGarage = cs finalStateString :: ByteString
             _ <- post "http://localhost:3000" rawRequestCarGarage
+            threadDelay 3000000
             let rawRequestSave = cs "Save " :: ByteString
             _ <- post "http://localhost:3000" rawRequestSave
             return ()
 
-    let rawRequestGetStateFinal = cs "GetState" :: ByteString
-    serverStateFinal <- post "http://localhost:3000" rawRequestGetStateFinal
-    putStrLn $ "\n\nServer state after: " ++ cs (serverStateFinal ^. responseBody)
+    -- let rawRequestGetStateFinal = cs "GetState" :: ByteString
+    -- serverStateFinal <- post "http://localhost:3000" rawRequestGetStateFinal
+    -- putStrLn $ "\n\nServer state after: " ++ cs (serverStateFinal ^. responseBody)
 
 
     return result
@@ -354,20 +362,20 @@ main = do
     -- return ()
 
     -- With httpLock
-    -- result <- runHttpRequest runHttpOne program
-    -- putStrLn result
-    -- return ()
+    result <- runHttpRequest runHttpOne program
+    putStrLn result
+    return ()
 
     -- result <- runTest program
     -- putStrLn result
     -- return ()
 
-    result <- runHttpRequest runHttpSmart program
-    putStrLn result
-    return ()
+    -- result <- runHttpRequest runHttpSmart program
+    -- putStrLn result
+    -- return ()
 
     -- For testing/showing httpLock functionality 
     -- putStrLn "Test start"
     -- simulateRequests
     -- putStrLn "Test end"
-    -- return ""
+    -- return ()
